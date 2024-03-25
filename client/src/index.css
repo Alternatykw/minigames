@@ -11,18 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-.landing-page {
-  background-color: #111;
-  color: white;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}

@@ -46,4 +46,11 @@
     font-weight: 500;
   }
 
-  
+  .success-message {
+    background-color: #45a049;
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 1em; /* Adjust the font size as needed */
+    font-weight: 500;
+    margin-bottom: 14rem;
+  }

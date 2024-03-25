@@ -9,6 +9,7 @@ const RegistrationForm = ({ onClose, onLoginClick }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [registrationSuccess, setRegistrationSuccess] = useState(false); // State to manage registration success message
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -37,14 +38,14 @@ const RegistrationForm = ({ onClose, onLoginClick }) => {
     }
 
     try {
-      const response = await axios.post('/register', {
+      const response = await axios.post('http://localhost:5000/register', {
         username,
         email,
         password
       });
 
       console.log(response.data); // Log the response from the server
-      onClose(); // Close the modal after successful registration
+      setRegistrationSuccess(true); // Set registration success message
     } catch (error) {
       console.error('Registration failed:', error.response.data.message);
       setErrorMessage(error.response.data.message);
@@ -52,40 +53,46 @@ const RegistrationForm = ({ onClose, onLoginClick }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="registration-form" method="post">
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={handleUsernameChange}
-        required
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={handleEmailChange}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={handlePasswordChange}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={handleConfirmPasswordChange}
-        required
-      />
-      {!passwordsMatch && <p className="error-message">Passwords do not match</p>}
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-      <button type="submit" disabled={!passwordsMatch}>Register</button>
-      <p className="login-link" onClick={onLoginClick}>Already have an account? Login</p>
-    </form>
+    <div>
+      {registrationSuccess ? (
+        <p className="success-message">Registered successfully! You may now login.</p>
+      ) : (
+        <form onSubmit={handleSubmit} className="registration-form" method="post">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={handleUsernameChange}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={handleEmailChange}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            required
+          />
+          {!passwordsMatch && <p className="error-message">Passwords do not match</p>}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          <button type="submit" disabled={!passwordsMatch}>Register</button>
+          <p className="login-link" onClick={onLoginClick}>Already have an account? Login</p>
+        </form>
+      )}
+    </div>
   );
 };
 

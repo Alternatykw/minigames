@@ -1,26 +1,26 @@
-import Navbar from './components/Navbar';
-import FlyoutMenu from './components/FlyoutMenu';
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './sites/LandingPage';
+import Bombs from './sites/Bombs';
+import Towers from './sites/Towers';
+import NotFound from './sites/NotFound';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
 
-root.render(
+ReactDOM.render(
   <React.StrictMode>
-    <div className="landing-page">
-      <Navbar />
-      <FlyoutMenu />
-      <div className="content">
-        <h1>Welcome to our Dark Themed Landing Page</h1>
-        <p>This is a sample landing page built with React, featuring a dark theme.</p>
-      </div>
-    </div>
-  </React.StrictMode>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/bombs" element={<Bombs />} />
+        <Route path="/towers" element={<Towers />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
+  </React.StrictMode>,
+  document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
