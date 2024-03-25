@@ -1,0 +1,55 @@
+.flyout-menu {
+    position: fixed;
+    top: 0;
+    left: -20rem; /* Start off-screen */
+    width: 20rem;
+    height: 100%;
+    background-color: #222;
+    transition: left 0.75s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  .flyout-menu.open {
+    left: 0; /* Slide in from the left */
+  }
+  
+  .flyout-menu li {
+    padding: 1rem 0rem;
+    display: block;
+    width:calc(100%-3px);
+  }
+  
+  .flyout-menu a{
+    display: block;
+    color: rgb(210, 210, 210);
+    transition: color 0.6s ease;
+    text-decoration: none;
+    margin-left: 1rem;
+  }
+  
+  .flyout-menu a:hover {
+    color:white;
+    transition: color 0.6s ease;
+    text-decoration: none;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 999; /* Ensure it's above the main content */
+  }
+
+  .darker{
+    border-left: 3px solid rgba(57, 95, 201, 1); /* i need to change the text -3px*/
+    background: linear-gradient(to right, rgba(57, 95, 201, 0.2) 0%, #222 55%);
+  }
+
+  .flyout-menu .darker a {
+    color: white!important;
+    margin-left: calc(1rem-3px);
+  }
