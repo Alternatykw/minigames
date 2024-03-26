@@ -25,7 +25,8 @@
     color: rgb(210, 210, 210);
     transition: color 0.6s ease;
     text-decoration: none;
-    margin-left: 1rem;
+    margin-left: 2rem;
+    text-align: left; /*i don't really know if it's better*/ 
   }
   
   .flyout-menu a:hover {
@@ -45,11 +46,12 @@
   }
 
   .darker{
-    border-left: 3px solid rgba(57, 95, 201, 1); /* i need to change the text -3px*/
+    font-weight: bold;
+    border-left: 3px solid rgba(57, 95, 201, 1);
     background: linear-gradient(to right, rgba(57, 95, 201, 0.2) 0%, #222 55%);
   }
 
   .flyout-menu .darker a {
     color: white!important;
-    margin-left: calc(1rem-3px);
+    margin-left: calc(2rem - 3px);
   }

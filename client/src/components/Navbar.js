@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import './Navbar.css';
 import FlyoutMenu from './FlyoutMenu';
 import LoginForm from './LoginForm';
+import axios from 'axios';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoneyBill1 } from "@fortawesome/free-regular-svg-icons";
+
 
 const Navbar = () => {
   const [isFlyoutMenuOpen, setIsFlyoutMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalClosing, setIsModalClosing] = useState(false); // Define isModalClosing state
+  const [isModalClosing, setIsModalClosing] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -34,16 +41,47 @@ const Navbar = () => {
   const openModal = (event) => {
     event.stopPropagation();
     setIsModalOpen(true);
-    document.body.classList.add('modal-open'); // Add modal-open class to body
   };
 
   const closeModal = () => {
     setIsModalClosing(true); // Set isModalClosing state to trigger closing animation
-    document.body.classList.remove('modal-open'); // Remove modal-open class from body
     setTimeout(() => {
       setIsModalOpen(false); // Close the modal after animation completes
       setIsModalClosing(false); // Reset isModalClosing state
     }, 500); // Adjust the timing to match the animation duration
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Retrieve the authentication token from localStorage
+    if (token) {
+      // If token exists, user is logged in
+      setIsLoggedIn(true);
+      // Fetch user data (username and balance) using the token
+      axios.get('http://localhost:5000/user', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        setUsername(response.data.username);
+        setBalance(response.data.balance);
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+    } else {
+      // If token doesn't exist, user is not logged in
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    // Clear authentication token from localStorage
+    localStorage.removeItem('token');
+    // Reset user state
+    setUsername('');
+    setBalance(0);
+    setIsLoggedIn(false);
   };
 
   return (
@@ -53,11 +91,27 @@ const Navbar = () => {
           Menu
         </button>
       </div>
-      <FlyoutMenu isOpen={isFlyoutMenuOpen} onClose={closeFlyoutMenu} />
+      <FlyoutMenu isOpen={isFlyoutMenuOpen} onClose={closeFlyoutMenu} />  
+
       <div className="navbar-right">
+
+      {!isLoggedIn ? (
+
         <button className="login-button" onClick={openModal}>
           Login / Register
         </button>
+
+      ) : (
+
+      <div className="navbar-right">
+        {username} | <FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balance.$numberDecimal}  &nbsp;
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+
+      )}
+
       </div>
       {isModalOpen && (
         <div className={`modal-container ${isModalClosing ? 'closing' : ''}`}>
@@ -66,6 +120,8 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+
     </nav>
   );
 };

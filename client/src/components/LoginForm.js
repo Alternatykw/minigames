@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import RegistrationForm from './RegistrationForm';
+import axios from 'axios';
 
 const LoginForm = ({ onClose }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showRegistration, setShowRegistration] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -15,11 +17,17 @@ const LoginForm = ({ onClose }) => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Username:', username);
-    console.log('Password:', password);
-    onClose();
+    try {
+      const response = await axios.post('http://localhost:5000/login', { username, password });
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      window.location.reload(false);
+    } catch (error) {
+      console.error('Error logging in:', error.response.data.message);
+      setErrorMessage(error.response.data.message);
+    }
   };
 
   const handleRegisterClick = (event) => {
@@ -34,7 +42,7 @@ const LoginForm = ({ onClose }) => {
 
   return (
     <div className={`login-container ${showRegistration ? 'registration-open' : ''}`}>
-      <form onSubmit={handleSubmit} className={`login-form ${showRegistration ? 'hide' : ''}`}>
+      <form onSubmit={handleSubmit} method="post" className={`login-form ${showRegistration ? 'hide' : ''}`}>
         <input
           type="text"
           placeholder="Username"
@@ -50,6 +58,7 @@ const LoginForm = ({ onClose }) => {
           required
         />
         <button type="submit">Login</button>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <p onClick={handleRegisterClick} className="register-link">
           Don't have an account? Register
         </p>

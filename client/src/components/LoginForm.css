@@ -65,3 +65,9 @@
     text-decoration: underline;
     color: rgba(255, 255, 255, 0.833); /* Dimmed background */
   }
+
+  .error-message {
+    color: red;
+    font-size: 0.8em;
+    font-weight: 500;
+  }
