@@ -68,6 +68,11 @@ const Navbar = () => {
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
+        if (error.response && error.response.status === 401) {
+          // If token is expired or invalid, log the user out
+          localStorage.removeItem('token'); // Clear token from localStorage
+          setIsLoggedIn(false); // Set isLoggedIn state to false
+        }
       });
     } else {
       // If token doesn't exist, user is not logged in

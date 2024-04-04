@@ -11,8 +11,6 @@ return(
         <FlyoutMenu />
     <div className="content">
         <BombsGame />
-        <h1>Welcome to our Dark Themed Landing Page</h1>
-        <p>There will be bombs.</p>
     </div>
     </div>
 )

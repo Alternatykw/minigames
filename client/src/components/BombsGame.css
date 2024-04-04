@@ -7,6 +7,11 @@
     margin: 1px;
     font-size: 50px;
 }
+
+.button-grid button:disabled {
+    border-color: buttonborder;
+}
+
 .container {
     display: flex;
   }
@@ -21,12 +26,46 @@
 .sidebar button {
     width: 5rem;
     height: 2rem;
+    margin-left: calc(3.5rem + 1px);
 }
 
-.clicked{
-    background-color: purple;
+.sidebar input{
+    width: 4.5rem;
+    height: 1.75rem;
+    text-align: center;
 }
 
 .row {
     display: flex;
   }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.multiplier{
+    font-size: 48px;
+}
+:disabled{
+    background-color: white;
+    color: black;
+}
+.bot{
+    display: flex;
+    flex-direction: column;
+}
+
+.green{
+    color: greenyellow;
+}
+
+.red{
+    color: red;
+}
+
+.cashout button{
+    width: 5rem;
+    height: 2rem;
+}
