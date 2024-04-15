@@ -3,6 +3,7 @@ import './BombsGame.css';
 
 const BombsGame = () => {
   const [buttons, setButtons] = useState([]);
+  const [activeButton, setActiveButton] = useState(1);
   const [numRandomBombs, setNumRandomBombs] = useState(3);
   const [gameOver, setGameOver] = useState(false);
   const [gameWon, setGameWon] = useState(false);
@@ -12,6 +13,10 @@ const BombsGame = () => {
   const [clickedCount, setClickedCount] = useState(0);
   const [multiplier, setMultiplier] = useState(1.1);
   const [wonCredits, setWonCredits] = useState(0);
+  const [lostCredits, setLostCredits] = useState(0);
+  const [bombsAmount, setBombsAmount] = useState(3);
+  const [currentCashout, setCurrentCashout] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
   
   const generateRandomNumbers = () => {
     const randomIndices = [];
@@ -36,25 +41,32 @@ const BombsGame = () => {
     setGameWon(false);
     setRevealedButtons([]);
     setClickedCount(0);
+    setCurrentCashout(0);
   };
 
-  const handleBombButton = (bombsAmount) => {
-    switch(bombsAmount){
-      default : 
-        setMultiplier(1.1);
-        break;
-      case 10: 
-        setMultiplier(1.5);
-        break;
-      case 24: 
-        setMultiplier(21.37);
-        break;
+  const StartGame = (bombsAmount) => {
+    if(gameValue<=0 || isNaN(gameValue)){
+      document.getElementById('credits-input').focus();
+      setErrorMessage("Choose credits amount.")
+    }else{
+      setGameInProgress(true);
+      switch(bombsAmount){
+        default : 
+          setMultiplier(1.1);
+          break;
+        case 10: 
+          setMultiplier(1.5);
+          break;
+        case 24: 
+          setMultiplier(21.37);
+          break;
+      }
+      resetGame(bombsAmount);
     }
-    resetGame(bombsAmount);
   }
 
   const handleWin = () =>{
-    setWonCredits((gameValue * (multiplier ** clickedCount)).toFixed(2));
+    setWonCredits(currentCashout);
     setGameWon(true);
     revealButtons();
   }
@@ -85,19 +97,18 @@ const BombsGame = () => {
   const handleClick = (index) => {
     if (buttons[index].isBomb) {
       setGameOver(true);
+      setLostCredits(gameValue);
       const updatedButtons = [...buttons];
       updatedButtons[index].revealed = true;
       setButtons(updatedButtons);
       revealButtons();
     } else {
-      if (!gameInProgress) {
-        setGameInProgress(true);
-      }
       const updatedButtons = [...buttons];
       updatedButtons[index].revealed = true;
       setButtons(updatedButtons);
       setRevealedButtons([...revealedButtons, index]);
-      setClickedCount(clickedCount + 1); // Increment clicked count when a non-bomb button is clicked
+      setClickedCount(clickedCount + 1);
+      setCurrentCashout((gameValue * (multiplier ** (clickedCount+1))-gameValue).toFixed(2));
     }
   };
 
@@ -106,7 +117,7 @@ const BombsGame = () => {
     rows.push(
       <div className="row">
         {buttons.slice(i, i + 5).map((button, index) => (
-          <button key={i + index} onClick={() => handleClick(i + index)} disabled={gameOver || revealedButtons.includes(i + index)}>
+          <button key={i + index} onClick={() => handleClick(i + index)} disabled={gameOver || !gameInProgress || revealedButtons.includes(i + index)}>
             {button.revealed ? button.isBomb ? '💣' : '💚' : ''}
           </button>
         ))}
@@ -117,18 +128,25 @@ const BombsGame = () => {
   return (
     <div className="container">
       <div className="sidebar">
-        <button onClick={() => handleBombButton(3)} disabled={gameInProgress}>3 Bombs</button>
-        <button onClick={() => handleBombButton(10)} disabled={gameInProgress}>10 Bombs</button>
-        <button onClick={() => handleBombButton(24)} disabled={gameInProgress}>24 Bombs</button>
-        <p>Credits: <input type="number" disabled={gameInProgress} defaultValue="0" onChange={(e) => {if(!gameInProgress) setGameValue(parseFloat(e.target.value))}}></input></p>
+        <h4>Number of Bombs:</h4>
+        <div className="rowButtons">
+          <button className={`sidebutton${activeButton===1 ? '-active' : ''}`} onClick={() => {setBombsAmount(3); setActiveButton(1);}} disabled={gameInProgress}>3 Bombs</button>
+          <button className={`sidebutton${activeButton===2 ? '-active' : ''}`} onClick={() => {setBombsAmount(10); setActiveButton(2);}} disabled={gameInProgress}>10 Bombs</button>
+          <button className={`sidebutton${activeButton===3 ? '-active' : ''}`} onClick={() => {setBombsAmount(24); setActiveButton(3);}} disabled={gameInProgress}>24 Bombs</button>
+        </div>
+        <div className="rowButtons">
+          <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={(e) => {if(!gameInProgress) setGameValue(parseFloat(e.target.value)); if(errorMessage!='' && e.target.value!=0 || isNaN(e.target.value)) setErrorMessage("");}}></input></p>
+          {gameInProgress? <button className="cashoutButton" onClick={() => handleWin()}disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button> : <button className="startbutton" onClick={() => StartGame(bombsAmount)}>Start Game</button>}
+        </div>
+        {errorMessage==="" ? "" : <div className="errorMessage">{errorMessage}</div>}
+        {gameWon && <p className="win">You won: {wonCredits} credits</p>}
+        {gameOver && <p className="lose"> You lost: {lostCredits} credits</p>}
       </div>
       <div className="bot">
         <div className="button-grid">
           {rows}
-        </div> 
-        <div className={`multiplier ${gameOver ? 'red' : 'green'}`}>X{(multiplier ** clickedCount).toFixed(2)}</div>   
-        <div className="cashout"><button onClick={() => handleWin()}disabled={!gameInProgress || gameOver}>Cashout</button></div>
-        {gameWon && <div className="win">Congrats! You won: {wonCredits} credits</div>}
+          <div className={`multiplier ${gameOver ? 'red' : 'green'}`}>X{(multiplier ** clickedCount).toFixed(2)}</div>  
+        </div>  
       </div>
     </div>
   );

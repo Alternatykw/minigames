@@ -44,11 +44,11 @@ const Navbar = () => {
   };
 
   const closeModal = () => {
-    setIsModalClosing(true); // Set isModalClosing state to trigger closing animation
+    setIsModalClosing(true);
     setTimeout(() => {
-      setIsModalOpen(false); // Close the modal after animation completes
-      setIsModalClosing(false); // Reset isModalClosing state
-    }, 500); // Adjust the timing to match the animation duration
+      setIsModalOpen(false);
+      setIsModalClosing(false);
+    }, 500);
   };
 
   useEffect(() => {
@@ -56,7 +56,6 @@ const Navbar = () => {
     if (token) {
       // If token exists, user is logged in
       setIsLoggedIn(true);
-      // Fetch user data (username and balance) using the token
       axios.get('http://localhost:5000/user', {
         headers: {
           Authorization: `Bearer ${token}`
@@ -83,10 +82,10 @@ const Navbar = () => {
   const handleLogout = () => {
     // Clear authentication token from localStorage
     localStorage.removeItem('token');
-    // Reset user state
     setUsername('');
     setBalance(0);
     setIsLoggedIn(false);
+    window.location.reload(false);
   };
 
   return (
@@ -97,6 +96,13 @@ const Navbar = () => {
         </button>
       </div>
       <FlyoutMenu isOpen={isFlyoutMenuOpen} onClose={closeFlyoutMenu} />  
+
+      {isLoggedIn && (
+        <div className="navbar-middle">
+          <div className="balance"><FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balance.$numberDecimal} </div>
+          <div className="balance-button"><button>+</button></div>
+        </div> 
+      )}
 
       <div className="navbar-right">
 
@@ -109,8 +115,8 @@ const Navbar = () => {
       ) : (
 
       <div className="navbar-right">
-        {username} | <FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balance.$numberDecimal}  &nbsp;
-        <button className="logout-button" onClick={handleLogout}>
+        {username}
+        <button className="logout-button" onClick={handleLogout}> {/*move to flyout menu or profile dropdown*/}
           Logout
         </button>
       </div>

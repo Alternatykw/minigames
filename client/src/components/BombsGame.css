@@ -1,3 +1,11 @@
+:focus, :active{
+outline: none;
+}
+
+.button-grid {
+    padding: 0em 4em 0em 4em;
+}
+
 .button-grid button {
     background-color: #333;
     color: white;
@@ -17,21 +25,32 @@
   }
   
 .sidebar {
-    margin-right: 4em;
+    padding: 0.5rem 3rem 0rem 3rem;
+    background-color: #333;
+    border: 2px solid #555;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    height: 24.5rem;
 }
 
-.sidebar button {
+.sidebutton, .sidebutton-active{
     width: 5rem;
     height: 2rem;
-    margin-left: calc(3.5rem + 1px);
+    margin-left: 5px;
+}
+
+.sidebutton-active {
+    font-weight: 550;
+}
+
+.sidebutton:first-child, .sidebutton-active:first-child{
+    margin-left: 0px;
 }
 
 .sidebar input{
-    width: 4.5rem;
-    height: 1.75rem;
+    width: 5em;
+    height: 1.95em;
     text-align: center;
 }
 
@@ -65,7 +84,49 @@ input::-webkit-inner-spin-button {
     color: red;
 }
 
-.cashout button{
-    width: 5rem;
+.startbutton, .cashoutButton{
+    color: white;
+    background-color: rgb(103, 145, 40);
+    margin-top: 1rem;
+    border: none;
+    width: 7rem;
     height: 2rem;
+    margin-left: 5px;
+}
+
+.startbutton:hover, .cashoutButton:hover{
+    background-color: rgb(0, 130, 0);
+    cursor: pointer;
+}
+
+.startbutton:active, .cashoutButton:active{
+    background-color: darkgreen;
+    transition: color 0.4s ease;
+}
+
+.win{
+    text-decoration: bold;
+    color:rgb(103, 145, 40);
+    transition: color 0.3s ease;
+}
+
+.win:hover {
+    color: rgb(153, 185, 90);
+}
+
+.lose{
+    text-decoration: bold;
+    color: red;
+}
+
+.rowButtons{
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.errorMessage{
+    color: red;
+    font-size: 0.8em;
+    font-weight: 500;
 }

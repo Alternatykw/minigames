@@ -28,7 +28,7 @@ const FlyoutMenu = ({ isOpen, onClose }) => {
     <div>
       {isOpen && <div className="overlay" onClick={onClose}></div>}
       <div className={`flyout-menu ${isOpen ? 'open' : ''}`}>
-        <h1>Dashboard</h1>
+        <h1 onClick={onClose}>Dashboard</h1>
         <ul>
           <li className={isCurrent('') ? 'darker' : ''}><a href={isCurrent('') ? "javascript:void(0);" : "/"}><FontAwesomeIcon icon={faHouse} fixedWidth/> Home page</a></li>
           <li className={isCurrent('bombs') ? 'darker' : ''}><a href={isCurrent('bombs') ? "javascript:void(0);" : "/bombs"}><FontAwesomeIcon icon={faBomb} fixedWidth/> Bombs</a></li>

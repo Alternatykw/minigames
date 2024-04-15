@@ -1,12 +1,12 @@
 .flyout-menu {
     position: fixed;
+    z-index: 1000;
     top: 0;
     left: -20rem; /* Start off-screen */
     width: 20rem;
     height: 100%;
     background-color: #222;
     transition: left 0.75s ease;
-    z-index: 1000;
     overflow-y: auto;
   }
   
@@ -18,6 +18,10 @@
     padding: 1rem 0rem;
     display: block;
     width:calc(100%-3px);
+  }
+
+  .flyout-menu h1{
+    cursor:pointer;
   }
   
   .flyout-menu a{
@@ -37,12 +41,12 @@
 
   .overlay {
     position: fixed;
+    z-index: 999;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    z-index: 999; /* Ensure it's above the main content */
+    background-color: rgba(0, 0, 0, 0.5);
   }
 
   .darker{
