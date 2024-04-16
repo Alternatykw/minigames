@@ -1,132 +1,110 @@
-:focus, :active{
-outline: none;
+:focus, :active {
+	outline: none;
 }
-
 .button-grid {
-    padding: 0em 4em 0em 4em;
+	padding: 0em 4em 0em 4em;
 }
-
 .button-grid button {
-    background-color: #333;
-    color: white;
-    width: 5rem;
-    height: 5rem;
-    border-radius: 7.5%;
-    margin: 1px;
-    font-size: 50px;
+	background-color: #333;
+	border-radius: 7.5%;
+	color: white;
+	font-size: 50px;
+	height: 5rem;
+	margin: 1px;
+	width: 5rem;
 }
-
 .button-grid button:disabled {
-    border-color: buttonborder;
+	border-color: buttonborder;
 }
-
 .container {
-    display: flex;
-  }
-  
+	display: flex;
+}
 .sidebar {
-    padding: 0.5rem 3rem 0rem 3rem;
-    background-color: #333;
-    border: 2px solid #555;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    height: 24.5rem;
+	align-items: flex-start;
+	background-color: #333;
+	border: 2px solid #555;
+	display: flex;
+	flex-direction: column;
+	height: 24.5rem;
+	padding: 0.5rem 3rem 0rem 3rem;
 }
-
-.sidebutton, .sidebutton-active{
-    width: 5rem;
-    height: 2rem;
-    margin-left: 5px;
+.sidebutton, .sidebutton-active {
+	height: 2rem;
+	margin-left: 5px;
+	width: 5rem;
 }
-
 .sidebutton-active {
-    font-weight: 550;
+	font-weight: 550;
 }
-
-.sidebutton:first-child, .sidebutton-active:first-child{
-    margin-left: 0px;
+.sidebutton:first-child, .sidebutton-active:first-child {
+	margin-left: 0px;
 }
-
-.sidebar input{
-    width: 5em;
-    height: 1.95em;
-    text-align: center;
+.sidebar input {
+	height: 1.95em;
+	text-align: center;
+	width: 5em;
 }
-
 .row {
-    display: flex;
-  }
-
+	display: flex;
+}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+	-webkit-appearance: none;
+	margin: 0;
 }
-
-.multiplier{
-    font-size: 48px;
+.multiplier {
+	font-size: 48px;
 }
-:disabled{
-    background-color: white;
-    color: black;
+:disabled {
+	background-color: white;
+	color: black;
 }
-.bot{
-    display: flex;
-    flex-direction: column;
+.bot {
+	display: flex;
+	flex-direction: column;
 }
-
-.green{
-    color: greenyellow;
+.green {
+	color: greenyellow;
 }
-
-.red{
-    color: red;
+.red {
+	color: red;
 }
-
-.startbutton, .cashoutButton{
-    color: white;
-    background-color: rgb(103, 145, 40);
-    margin-top: 1rem;
-    border: none;
-    width: 7rem;
-    height: 2rem;
-    margin-left: 5px;
+.startbutton, .cashoutButton {
+	background-color: rgb(103, 145, 40);
+	border: none;
+	color: white;
+	height: 2rem;
+	margin-left: 5px;
+	margin-top: 1rem;
+	width: 7rem;
 }
-
-.startbutton:hover, .cashoutButton:hover{
-    background-color: rgb(0, 130, 0);
-    cursor: pointer;
+.startbutton:hover, .cashoutButton:hover {
+	background-color: rgb(0, 130, 0);
+	cursor: pointer;
 }
-
-.startbutton:active, .cashoutButton:active{
-    background-color: darkgreen;
-    transition: color 0.4s ease;
+.startbutton:active, .cashoutButton:active {
+	background-color: darkgreen;
+	transition: color 0.4s ease;
 }
-
-.win{
-    text-decoration: bold;
-    color:rgb(103, 145, 40);
-    transition: color 0.3s ease;
+.win {
+	color: rgb(103, 145, 40);
+	text-decoration: bold;
+	transition: color 0.3s ease;
 }
-
 .win:hover {
-    color: rgb(153, 185, 90);
+	color: rgb(153, 185, 90);
 }
-
-.lose{
-    text-decoration: bold;
-    color: red;
+.lose {
+	color: red;
+	text-decoration: bold;
 }
-
-.rowButtons{
-    margin-bottom: 0.5rem;
-    display: flex;
-    flex-direction: row;
+.rowButtons {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 0.5rem;
 }
-
-.errorMessage{
-    color: red;
-    font-size: 0.8em;
-    font-weight: 500;
+.errorMessage {
+	color: red;
+	font-size: 0.8em;
+	font-weight: 500;
 }

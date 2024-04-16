@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './BombsGame.css';
 
-const BombsGame = () => {
+const BombsGame = ({ openModal, isLoggedIn }) => {
   const [buttons, setButtons] = useState([]);
   const [activeButton, setActiveButton] = useState(1);
   const [numRandomBombs, setNumRandomBombs] = useState(3);
@@ -44,7 +44,7 @@ const BombsGame = () => {
     setCurrentCashout(0);
   };
 
-  const StartGame = (bombsAmount) => {
+  const startGame = (bombsAmount) => {
     if(gameValue<=0 || isNaN(gameValue)){
       document.getElementById('credits-input').focus();
       setErrorMessage("Choose credits amount.")
@@ -135,8 +135,11 @@ const BombsGame = () => {
           <button className={`sidebutton${activeButton===3 ? '-active' : ''}`} onClick={() => {setBombsAmount(24); setActiveButton(3);}} disabled={gameInProgress}>24 Bombs</button>
         </div>
         <div className="rowButtons">
-          <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={(e) => {if(!gameInProgress) setGameValue(parseFloat(e.target.value)); if(errorMessage!='' && e.target.value!=0 || isNaN(e.target.value)) setErrorMessage("");}}></input></p>
-          {gameInProgress? <button className="cashoutButton" onClick={() => handleWin()}disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button> : <button className="startbutton" onClick={() => StartGame(bombsAmount)}>Start Game</button>}
+          <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={(e) => {if(!gameInProgress) setGameValue(parseFloat(e.target.value)); if(errorMessage!=='' && (e.target.value!==0 || isNaN(e.target.value))) setErrorMessage("");}}></input></p>
+          {gameInProgress?
+          <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button> 
+            :
+          <button className="startbutton" onClick={isLoggedIn ? () => startGame(bombsAmount) : openModal}>Start Game</button>}
         </div>
         {errorMessage==="" ? "" : <div className="errorMessage">{errorMessage}</div>}
         {gameWon && <p className="win">You won: {wonCredits} credits</p>}

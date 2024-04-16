@@ -1,73 +1,47 @@
+.error-message {
+	color: red;
+	font-size: 0.8em;
+	font-weight: 500;
+}
+.login-container {
+	position: relative;
+}
 .login-form {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .login-form input[type="text"],
-  .login-form input[type="password"],
-  .login-form button {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: none;
-    border-radius: 4px;
-  }
-  
-  .login-form input[type="text"],
-  .login-form input[type="password"] {
-    background-color: white;
-    color: black;
-    width: calc(100% - 20px); 
-  }
-  
-  .login-form button {
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-  }
-  
-  .login-form button:hover {
-    background-color: #45a049;
-  }
-
-  .login-container {
-    position: relative;
-  }
-  
-  .login-form,
-  .registration-form {
-    transition: opacity 0.75s ease;
-  }
-  
-  .login-form.hide,
-  .registration-form.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .registration-form {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .registration-open .registration-form {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .register-link:hover{
-    cursor: pointer;
-    text-decoration: underline;
-    color: rgba(255, 255, 255, 0.833); /* Dimmed background */
-  }
-
-  .error-message {
-    color: red;
-    font-size: 0.8em;
-    font-weight: 500;
-  }
+	background-color: #333;
+	border-radius: 8px;
+	color: #fff;
+	padding: 20px;
+}
+.login-form button {
+	background-color: #4CAF50;
+	color: white;
+	cursor: pointer;
+}
+.login-form button:hover {
+	background-color: #45a049;
+}
+.login-form input[type="password"] {
+	background-color: white;
+	color: black;
+	width: calc(100% - 20px);
+}
+.register-link:hover {
+	color: rgba(255, 255, 255, 0.833);
+	cursor: pointer;
+	text-decoration: underline;
+}
+.registration-form {
+	left: 0;
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+}
+.registration-form.hide {
+	opacity: 0;
+	pointer-events: none;
+}
+.registration-open .registration-form {
+	opacity: 1;
+	pointer-events: auto;
+}

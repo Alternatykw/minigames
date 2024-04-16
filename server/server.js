@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
-app.use(cors()); // Enable CORS for all routes
+app.use(cors());
 
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
@@ -104,6 +104,28 @@ app.get('/user', verifyToken, async (req, res) => {
     console.error('Error fetching user data:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
+});
+
+app.put('/user/modifybalance', verifyToken, async (req, res) => {
+  try {
+    const { username, balance } = req.body;
+
+    // Find the user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's balance
+    user.balance = balance;
+    await user.save();
+
+    res.status(200).json({ message: 'Balance added successfully' });
+  } catch (error) {
+    console.error('Error adding balance:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+
 });
 
 app.listen(PORT, () => {

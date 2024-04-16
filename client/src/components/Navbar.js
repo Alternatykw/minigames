@@ -7,11 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyBill1 } from "@fortawesome/free-regular-svg-icons";
 
 
-const Navbar = () => {
+const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn, setIsLoggedIn}) => {
   const [isFlyoutMenuOpen, setIsFlyoutMenuOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalClosing, setIsModalClosing] = useState(false); 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState(0);
 
@@ -28,7 +25,7 @@ const Navbar = () => {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, [isModalOpen]);
-
+  
   const toggleFlyoutMenu = (event) => {
     event.stopPropagation();
     setIsFlyoutMenuOpen(!isFlyoutMenuOpen);
@@ -38,23 +35,9 @@ const Navbar = () => {
     setIsFlyoutMenuOpen(false);
   };
 
-  const openModal = (event) => {
-    event.stopPropagation();
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalClosing(true);
-    setTimeout(() => {
-      setIsModalOpen(false);
-      setIsModalClosing(false);
-    }, 500);
-  };
-
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Retrieve the authentication token from localStorage
+    const token = localStorage.getItem('token');
     if (token) {
-      // If token exists, user is logged in
       setIsLoggedIn(true);
       axios.get('http://localhost:5000/user', {
         headers: {
@@ -63,30 +46,46 @@ const Navbar = () => {
       })
       .then(response => {
         setUsername(response.data.username);
-        setBalance(response.data.balance);
+        setBalance(response.data.balance.$numberDecimal);
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
         if (error.response && error.response.status === 401) {
-          // If token is expired or invalid, log the user out
-          localStorage.removeItem('token'); // Clear token from localStorage
-          setIsLoggedIn(false); // Set isLoggedIn state to false
+          localStorage.removeItem('token');
+          setIsLoggedIn(false);
         }
       });
     } else {
-      // If token doesn't exist, user is not logged in
       setIsLoggedIn(false);
     }
   }, []);
 
   const handleLogout = () => {
-    // Clear authentication token from localStorage
     localStorage.removeItem('token');
     setUsername('');
     setBalance(0);
     setIsLoggedIn(false);
     window.location.reload(false);
   };
+
+  const addBalance = () => {
+    let updatedBalance=parseFloat(balance)+100.00;
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.put('http://localhost:5000/user/modifybalance', {
+        username: username,
+        balance: updatedBalance
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        setBalance(updatedBalance);
+      })
+    }
+  }
 
   return (
     <nav className="navbar">
@@ -99,8 +98,8 @@ const Navbar = () => {
 
       {isLoggedIn && (
         <div className="navbar-middle">
-          <div className="balance"><FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balance.$numberDecimal} </div>
-          <div className="balance-button"><button>+</button></div>
+          <div className="balance"><FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balance} </div>
+          <div className="balance-button" onClick={addBalance}><button>+</button></div>
         </div> 
       )}
 

@@ -1,61 +1,53 @@
 .flyout-menu {
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: -20rem; /* Start off-screen */
-    width: 20rem;
-    height: 100%;
-    background-color: #222;
-    transition: left 0.75s ease;
-    overflow-y: auto;
-  }
-  
-  .flyout-menu.open {
-    left: 0; /* Slide in from the left */
-  }
-  
-  .flyout-menu li {
-    padding: 1rem 0rem;
-    display: block;
-    width:calc(100%-3px);
-  }
-
-  .flyout-menu h1{
-    cursor:pointer;
-  }
-  
-  .flyout-menu a{
-    display: block;
-    color: rgb(210, 210, 210);
-    transition: color 0.6s ease;
-    text-decoration: none;
-    margin-left: 2rem;
-    text-align: left; /*i don't really know if it's better*/ 
-  }
-  
-  .flyout-menu a:hover {
-    color:white;
-    transition: color 0.6s ease;
-    text-decoration: none;
-  }
-
-  .overlay {
-    position: fixed;
-    z-index: 999;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-
-  .darker{
-    font-weight: bold;
-    border-left: 3px solid rgba(57, 95, 201, 1);
-    background: linear-gradient(to right, rgba(57, 95, 201, 0.2) 0%, #222 55%);
-  }
-
-  .flyout-menu .darker a {
-    color: white!important;
-    margin-left: calc(2rem - 3px);
-  }
+	background-color: #222;
+	height: 100%;
+	left: -20rem;
+	overflow-y: auto;
+	position: fixed;
+	top: 0;
+	transition: left 0.75s ease;
+	width: 20rem;
+	z-index: 1000;
+}
+.flyout-menu.open {
+	left: 0;
+}
+.flyout-menu li {
+	display: block;
+	padding: 1rem 0rem;
+	width: calc(100% - 3px);
+}
+.flyout-menu h1 {
+	cursor: pointer;
+}
+.flyout-menu a {
+	color: rgb(210, 210, 210);
+	display: block;
+	margin-left: 2rem;
+	text-align: left;
+	text-decoration: none;
+	transition: color 0.6s ease;
+}
+.flyout-menu a:hover {
+	color: white;
+	text-decoration: none;
+	transition: color 0.6s ease;
+}
+.overlay {
+	background-color: rgba(0, 0, 0, 0.5);
+	height: 100%;
+	left: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 999;
+}
+.darker {
+	background: linear-gradient(to right, rgba(57, 95, 201, 0.2) 0%, #222 55%);
+	border-left: 3px solid rgba(57, 95, 201, 1);
+	font-weight: bold;
+}
+.flyout-menu .darker a {
+	color: white!important;
+	margin-left: calc(2rem - 3px);
+}
