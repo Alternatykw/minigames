@@ -29,9 +29,16 @@ const Slider = () => {
     const moveGames = (direction) => {
         setGames(prevGames => {
             if (direction === "right") {
-                setPosition((position + 1) % games.length);
+                if(position>games.length){
+                    setPosition(0);
+                }else{
+                    setPosition(position + 1);
+                }
             } else if (direction === "left") {
-                setPosition((position - 1 + games.length) % games.length);
+                if(position<0){
+                    setPosition(games.length);
+                }
+                setPosition(position - 1);
             }
             return prevGames;
         });
@@ -40,7 +47,7 @@ const Slider = () => {
     const moveRight = () => {
         setDirection("right");
         moveGames(direction);
-        setTransformValue(`translateX(${position * 15.75}rem)`); //change this and one below
+        setTransformValue(`translateX(${position * 15.75}rem)`);
     };
 
     const moveLeft = () => {
