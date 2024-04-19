@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import './RegistrationForm.css';
 import axios from 'axios';
 
-const RegistrationForm = ({ onClose, onLoginClick }) => {
+const RegistrationForm = ({ onLoginClick }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [registrationSuccess, setRegistrationSuccess] = useState(false); // State to manage registration success message
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);

@@ -11,22 +11,42 @@ const Slider = () => {
         { title: "BOMBS", image: bomb, link: "/bombs" }
     ]);
 
+    const [direction, setDirection] = useState();
+    const [position, setPosition] = useState(1);
+    const [transformValue, setTransformValue] = useState();
+
+    const randomGame = () => {
+        let randomIndex = Math.floor(Math.random() * (games.length - 1)) + 1;
+        games[0].link=games[randomIndex].link;
+    };
+
+    randomGame();
+
     const playLink = () => {
-        window.location.href = games[1].link;
+        window.location.href = games[position].link;
     }
 
-    const moveRight = () => {
+    const moveGames = (direction) => {
         setGames(prevGames => {
-            const rotatedGames = [...prevGames.slice(-1), ...prevGames.slice(0, -1)];
-            return rotatedGames;
+            if (direction === "right") {
+                setPosition((position + 1) % games.length);
+            } else if (direction === "left") {
+                setPosition((position - 1 + games.length) % games.length);
+            }
+            return prevGames;
         });
     };
 
+    const moveRight = () => {
+        setDirection("right");
+        moveGames(direction);
+        setTransformValue(`translateX(${position * 15.75}rem)`); //change this and one below
+    };
+
     const moveLeft = () => {
-        setGames(prevGames => {
-            const rotatedGames = [...prevGames.slice(1), ...prevGames.slice(0, 1)];
-            return rotatedGames;
-        });
+        setDirection("left");
+        moveGames(direction);
+        setTransformValue(`translateX(${position * -15.75}rem)`);
     };
 
     return (
@@ -38,7 +58,10 @@ const Slider = () => {
                 </div> 
                 {games.map((game, index) => (
                     <a href={game.link} key={index}>
-                        <div className={`${index === 1 ? 'middle-' : ''}game-link`}>
+                        <div 
+                        className={`${index === position ? 'middle-' : ''}game-link`}
+                        style={{ transform: transformValue, transition:'transform 0.66s ease'}}
+                        >
                             <div className="photo">
                                 <img src={game.image} alt={game.title} />
                             </div>
