@@ -1,7 +1,7 @@
 import './Slider.css';
 import bomb from "../images/bomb.svg";
 import towers from "../images/towers.svg";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Slider = () => {
 
@@ -11,9 +11,8 @@ const Slider = () => {
         { title: "BOMBS", image: bomb, link: "/bombs" }
     ]);
 
-    const [direction, setDirection] = useState();
-    const [position, setPosition] = useState(1);
-    const [transformValue, setTransformValue] = useState();
+    const [position, setPosition] = useState(0);
+    const [transformValue, setTransformValue] = useState(`translateX(0rem)`);
 
     const randomGame = () => {
         let randomIndex = Math.floor(Math.random() * (games.length - 1)) + 1;
@@ -29,32 +28,26 @@ const Slider = () => {
     const moveGames = (direction) => {
         setGames(prevGames => {
             if (direction === "right") {
-                if(position>games.length){
-                    setPosition(0);
-                }else{
-                    setPosition(position + 1);
-                }
+                setPosition((position + 1) % games.length);
             } else if (direction === "left") {
-                if(position<0){
-                    setPosition(games.length);
-                }
-                setPosition(position - 1);
+                setPosition((position - 1 + games.length) % games.length);
             }
             return prevGames;
         });
     };
 
     const moveRight = () => {
-        setDirection("right");
-        moveGames(direction);
-        setTransformValue(`translateX(${position * 15.75}rem)`);
+        moveGames("right");
     };
 
     const moveLeft = () => {
-        setDirection("left");
-        moveGames(direction);
-        setTransformValue(`translateX(${position * -15.75}rem)`);
+        moveGames("left");
     };
+
+    
+    useEffect(() => {
+        setTransformValue(`translateX(${position * -15.75}rem)`);
+    }, [position]);
 
     return (
         <div className="content">
@@ -66,7 +59,7 @@ const Slider = () => {
                 {games.map((game, index) => (
                     <a href={game.link} key={index}>
                         <div 
-                        className={`${index === position ? 'middle-' : ''}game-link`}
+                        className={`${index === (position+1) ? 'middle-' : ''}game-link`}
                         style={{ transform: transformValue, transition:'transform 0.66s ease'}}
                         >
                             <div className="photo">
