@@ -32,6 +32,9 @@
 	cursor: pointer;
 	transform: scale(0.95);
 }
+.middle-game-link{
+	box-shadow: 0rem 0rem 1.5rem gray;
+}
 .game-link {
 	background-color: #292929;
 	height: 13.5rem;

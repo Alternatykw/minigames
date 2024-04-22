@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './BombsGame.css';
 
-const BombsGame = ({ openModal, isLoggedIn }) => {
+const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [buttons, setButtons] = useState([]);
   const [activeButton, setActiveButton] = useState(1);
   const [numRandomBombs, setNumRandomBombs] = useState(3);
@@ -61,6 +61,7 @@ const BombsGame = ({ openModal, isLoggedIn }) => {
           setMultiplier(21.37);
           break;
       }
+      modifyBalance(-gameValue);
       resetGame(bombsAmount);
     }
   }
@@ -69,7 +70,28 @@ const BombsGame = ({ openModal, isLoggedIn }) => {
     setWonCredits(currentCashout);
     setGameWon(true);
     revealButtons();
+    modifyBalance(Math.round((gameValue+parseFloat(currentCashout))*100)/100)
   }
+
+  const handleInputChange = (e) => {
+    if (!gameInProgress) {
+      setGameValue(parseFloat(e.target.value));
+    }
+    if (errorMessage !== '' && (e.target.value !== 0 || isNaN(e.target.value))) {
+      setErrorMessage('');
+    }
+    if (e.target.value > parseFloat(balance)){
+      e.target.value=parseFloat(balance);
+      setGameValue(parseFloat(balance));
+    }
+    if (e.target.value > 10000) {
+      e.target.value=10000;
+      setGameValue(10000);
+    }
+    if (e.target.value < 0){
+      e.target.value=0;
+    }
+  };
 
   useEffect(() => {
     const randomIndices = generateRandomNumbers();
@@ -108,7 +130,7 @@ const BombsGame = ({ openModal, isLoggedIn }) => {
       setButtons(updatedButtons);
       setRevealedButtons([...revealedButtons, index]);
       setClickedCount(clickedCount + 1);
-      setCurrentCashout((gameValue * (multiplier ** (clickedCount+1))-gameValue).toFixed(2));
+      setCurrentCashout(Math.round((gameValue * (multiplier ** (clickedCount+1))-gameValue)*100)/100);
     }
   };
 
@@ -135,7 +157,7 @@ const BombsGame = ({ openModal, isLoggedIn }) => {
           <button className={`sidebutton${activeButton===3 ? '-active' : ''}`} onClick={() => {setBombsAmount(24); setActiveButton(3);}} disabled={gameInProgress}>24 Bombs</button>
         </div>
         <div className="rowButtons">
-          <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={(e) => {if(!gameInProgress) setGameValue(parseFloat(e.target.value)); if(errorMessage!=='' && (e.target.value!==0 || isNaN(e.target.value))) setErrorMessage("");}}></input></p>
+          <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={handleInputChange}></input></p>
           {gameInProgress?
           <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button> 
             :

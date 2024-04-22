@@ -4,22 +4,26 @@ import Navbar from '../components/Navbar';
 import FlyoutMenu from '../components/FlyoutMenu';
 import Slider from '../components/Slider';
 import { useModal } from '../utils/ModalUtils';
+import { useUserData } from '../utils/UserUtils';
 
 const LandingPage = () => {
     
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isLoggedIn, username, balance, handleLogout, modifyBalance } = useUserData();
     const { isModalOpen, isModalClosing, openModal, closeModal } = useModal();
 
     return (
         <div className="landing-page">
-            <Navbar
-                isLoggedIn={isLoggedIn}
-                setIsLoggedIn={setIsLoggedIn}
-                isModalClosing={isModalClosing}
-                isModalOpen={isModalOpen}
-                openModal={openModal}
-                closeModal={closeModal}
-            />
+        <Navbar
+            modifyBalance={modifyBalance}
+            handleLogout={handleLogout}
+            username={username}
+            balance={balance}
+            isLoggedIn={isLoggedIn}
+            isModalClosing={isModalClosing}
+            isModalOpen={isModalOpen}
+            openModal={openModal}
+            closeModal={closeModal}
+        />
             <FlyoutMenu /> 
             <Slider />
         </div>

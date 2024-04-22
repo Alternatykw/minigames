@@ -1,18 +1,22 @@
+
 import './Slider.css';
+import question_mark from "../images/question_mark.svg";
 import bomb from "../images/bomb.svg";
 import towers from "../images/towers.svg";
+import dice from "../images/dice.svg";
 import { useState, useEffect } from 'react';
 
 const Slider = () => {
 
     const [games, setGames] = useState([
-        { title: "RANDOM GAME", image: bomb, link: ""},
-        { title: "TOWERS", image: towers, link: "/towers" },
-        { title: "BOMBS", image: bomb, link: "/bombs" }
+        { title: "RANDOM GAME", image: question_mark, link: ""},
+        { title: "DICE", image: dice, link: "/dice"},
+        { title: "BOMBS", image: bomb, link: "/bombs" },
+        { title: "TOWERS", image: towers, link: "/towers" }
     ]);
 
     const [position, setPosition] = useState(0);
-    const [transformValue, setTransformValue] = useState(`translateX(0rem)`);
+    const [visibleCards, setVisibleCards] = useState([]);
 
     const randomGame = () => {
         let randomIndex = Math.floor(Math.random() * (games.length - 1)) + 1;
@@ -44,9 +48,16 @@ const Slider = () => {
         moveGames("left");
     };
 
+    const updateVisibleCards = () => {
+        const visibleCards = [];
+        for (let i = position; i < position + 3; i++) {
+            visibleCards.push(games[i % games.length]);
+        }
+        setVisibleCards(visibleCards);
+    };
     
     useEffect(() => {
-        setTransformValue(`translateX(${position * -15.75}rem)`);
+        updateVisibleCards();
     }, [position]);
 
     return (
@@ -56,12 +67,9 @@ const Slider = () => {
                 <div className="arrow" onClick={moveLeft}>
                     &lt;
                 </div> 
-                {games.map((game, index) => (
+                {visibleCards.map((game, index) => (
                     <a href={game.link} key={index}>
-                        <div 
-                        className={`${index === (position+1) ? 'middle-' : ''}game-link`}
-                        style={{ transform: transformValue, transition:'transform 0.66s ease'}}
-                        >
+                        <div className={`${index === 1 ? 'middle-' : ''}game-link`} style={{ transition: 'transform 0.5s ease' }}>
                             <div className="photo">
                                 <img src={game.image} alt={game.title} />
                             </div>
