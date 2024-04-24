@@ -17,6 +17,7 @@ const Slider = () => {
 
     const [position, setPosition] = useState(0);
     const [visibleCards, setVisibleCards] = useState([]);
+    const [isAnimating, setIsAnimating] = useState(false);
 
     const randomGame = () => {
         let randomIndex = Math.floor(Math.random() * (games.length - 1)) + 1;
@@ -31,10 +32,48 @@ const Slider = () => {
 
     const moveGames = (direction) => {
         setGames(prevGames => {
+            setIsAnimating(true);
+            const gameLinks = document.querySelectorAll('.game-link, .middle-game-link');
             if (direction === "right") {
-                setPosition((position + 1) % games.length);
+                gameLinks.forEach((gameLink, index) => {
+                        if (index === visibleCards.length - 1) {
+                            gameLink.style.animation = 'moveRight 0.5s forwards, fadeOut 0.33s ease-out forwards';
+                        }
+                        else if (gameLink.classList.contains('middle-game-link')) {
+                            gameLink.style.animation = 'moveRightAndScaleDown 1s forwards';
+                        }
+                        else if (index === 0){
+                            gameLink.style.animation = 'fadeIn 0.5s ease-in forwards, moveLeft 1s forwards';
+                        }
+                        else if (index === 1){
+                            gameLink.style.animation = 'moveRightAndScaleUp 1s forwards';
+                        }
+                        setTimeout(() => {
+                            setPosition((position - 1 + games.length) % games.length);  
+                            gameLink.style.animation = '';
+                            setIsAnimating(false);
+                        }, 1010);    
+                });
             } else if (direction === "left") {
-                setPosition((position - 1 + games.length) % games.length);
+                gameLinks.forEach((gameLink, index) => {
+                        if (index === 1) {
+                            gameLink.style.animation = 'moveLeft 0.5s forwards, fadeOut 0.33s ease-out forwards';
+                        }
+                        else if (gameLink.classList.contains('middle-game-link')) {
+                            gameLink.style.animation = 'moveLeftAndScaleDown 1s forwards';
+                        }
+                        else if (index === 0){
+                            gameLink.style.animation = 'fadeIn 0.5s ease-in forwards, moveRight 1s forwards';
+                        }
+                        else if (index === visibleCards.length - 1){
+                            gameLink.style.animation = 'moveLeftAndScaleUp 1s forwards';
+                        }
+                        setTimeout(() => {
+                            setPosition((position + 1) % games.length);
+                            gameLink.style.animation = '';
+                            setIsAnimating(false);
+                        }, 1010);    
+                });
             }
             return prevGames;
         });
@@ -50,7 +89,7 @@ const Slider = () => {
 
     const updateVisibleCards = () => {
         const visibleCards = [];
-        for (let i = position; i < position + 3; i++) {
+        for (let i = position; i < position + 4; i++) {
             visibleCards.push(games[i % games.length]);
         }
         setVisibleCards(visibleCards);
@@ -64,12 +103,12 @@ const Slider = () => {
         <div className="content">
             <h1>Welcome to my Minigames Website</h1>
             <div className="games">
-                <div className="arrow" onClick={moveLeft}>
+                <div className="arrow" onClick={isAnimating ? null : moveLeft}>
                     &lt;
                 </div> 
                 {visibleCards.map((game, index) => (
                     <a href={game.link} key={index}>
-                        <div className={`${index === 1 ? 'middle-' : ''}game-link`} style={{ transition: 'transform 0.5s ease' }}>
+                        <div className={`${index === 0 ? "invisible" : ""} ${index === 2 ? 'middle-' : ''}game-link`}>
                             <div className="photo">
                                 <img src={game.image} alt={game.title} />
                             </div>
@@ -79,7 +118,7 @@ const Slider = () => {
                         </div>
                     </a>
                 ))}
-                <div className="arrow" onClick={moveRight}>
+                <div className="arrow" onClick={isAnimating ? null : moveRight}>
                     &gt;
                 </div>   
             </div>

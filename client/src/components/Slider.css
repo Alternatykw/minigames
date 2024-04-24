@@ -9,30 +9,23 @@
 }
 .game-link, .middle-game-link {
 	align-items: center;
-	background-color: #333;
 	border: 2px solid #555;
 	border-radius: 5px;
 	display: flex;
 	flex-direction: column;
-	height: 15rem;
 	justify-content: center;
 	text-align: center;
 	transition: transform 0.66s;
-	width: 15rem;
-}
-.animation-left{
-	transform: translateX(-15.75rem);
-	transition: transform 0.66s ease;
-}
-.animation-right{
-	transform: translateX(15.75rem);
-	transition: transform 0.66s ease;
 }
 .middle-game-link:hover, .game-link:hover {
 	cursor: pointer;
 	transform: scale(0.95);
 }
 .middle-game-link{
+	height: 15rem;
+	width: 15rem;
+	margin: 0;
+	background-color: #333;
 	box-shadow: 0rem 0rem 1.5rem gray;
 }
 .game-link {
@@ -91,4 +84,109 @@ a {
 }
 .arrow::selection {
 	background-color: transparent;
+}
+.invisible{
+	visibility: hidden;
+	position: absolute;
+	margin-left: 17.5rem;
+	transform: scale(0.5);
+}
+@keyframes moveRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(16rem);
+    }
+}
+@keyframes moveLeft {
+    from {
+        transform: translateX(0rem);
+    }
+    to {
+        transform: translateX(-16rem);
+    }
+}
+@keyframes fadeOut {
+	from{
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.5);
+	}
+}
+@keyframes fadeIn {
+	0%{
+		visibility: hidden;
+		opacity: 0;
+	}
+	50%{
+		visibility: hidden;
+		opacity: 0.5;
+	}
+	100% {
+		visibility: visible;
+		opacity: 1;
+	}
+}
+@keyframes moveRightAndScaleDown {
+    from {
+        transform: translateX(0);
+		box-shadow: 0rem 0rem 1.5rem gray;
+		background-color: #333;
+    }
+    to {
+        transform: translateX(16rem);
+		box-shadow: 0rem 0rem 0rem gray;
+		background-color: #292929;
+		height: 13.5rem;
+		margin: 0.75rem;
+		width: 13.5rem;
+    }
+}
+@keyframes moveRightAndScaleUp {
+    from {
+        transform: translateX(0);
+		box-shadow: 0rem 0rem 0rem gray;
+		background-color: #292929;
+    }
+    to {
+        transform: translateX(16rem);
+		box-shadow: 0rem 0rem 1.5rem gray;
+		background-color: #333;
+		height: 15rem;
+		width: 15rem;
+		margin: 0;
+    }
+}
+@keyframes moveLeftAndScaleDown {
+    from {
+        transform: translateX(0);
+		box-shadow: 0rem 0rem 1.5rem gray;
+		background-color: #333;
+    }
+    to {
+        transform: translateX(-16rem);
+		box-shadow: 0rem 0rem 0rem gray;
+		background-color: #292929;
+		height: 13.5rem;
+		margin: 0.75rem;
+		width: 13.5rem;
+    }
+}
+@keyframes moveLeftAndScaleUp {
+    from {
+        transform: translateX(0) scale(1);
+		box-shadow: 0rem 0rem 0rem gray;
+		background-color: #292929;
+    }
+    to {
+        transform: translateX(-16rem);
+		box-shadow: 0rem 0rem 1.5rem gray;
+		background-color: #333;
+		height: 15rem;
+		width: 15rem;
+		margin: 0;
+    }
 }
