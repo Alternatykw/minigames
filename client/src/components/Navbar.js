@@ -43,7 +43,7 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
       {isLoggedIn && (
         <div className="navbar-middle">
           <div className="balance"><FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balance} </div>
-          <div className="balance-button" onClick={() => modifyBalance(100.24)}><button>+</button></div>
+          <div className="balance-button" onClick={() => modifyBalance(100)}><button>+</button></div>
         </div> 
       )}
 

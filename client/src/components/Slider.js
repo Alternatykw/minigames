@@ -49,8 +49,8 @@ const Slider = () => {
                             gameLink.style.animation = 'moveRightAndScaleUp 1s forwards';
                         }
                         setTimeout(() => {
-                            setPosition((position - 1 + games.length) % games.length);  
                             gameLink.style.animation = '';
+                            setPosition((position - 1 + games.length) % games.length);  
                             setIsAnimating(false);
                         }, 1010);    
                 });
@@ -69,8 +69,8 @@ const Slider = () => {
                             gameLink.style.animation = 'moveLeftAndScaleUp 1s forwards';
                         }
                         setTimeout(() => {
-                            setPosition((position + 1) % games.length);
                             gameLink.style.animation = '';
+                            setPosition((position + 1) % games.length);
                             setIsAnimating(false);
                         }, 1010);    
                 });

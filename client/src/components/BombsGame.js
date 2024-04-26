@@ -33,7 +33,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     const newButtons = [];
     const randomIndices = generateRandomNumbers();
     for (let i = 0; i < 25; i++) {
-      newButtons.push({ content: '', isBomb: randomIndices.includes(i), revealed: false });
+      newButtons.push({ content: '', isBomb: randomIndices.includes(i), revealed: false, exploded: false, clicked: false});
     }
     setButtons(newButtons);
     setNumRandomBombs(bombsAmount);
@@ -70,7 +70,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     setWonCredits(currentCashout);
     setGameWon(true);
     revealButtons();
-    modifyBalance(Math.round((gameValue+parseFloat(currentCashout))*100)/100)
+    modifyBalance(Math.round((parseFloat(currentCashout))*100)/100);
   }
 
   const handleInputChange = (e) => {
@@ -94,22 +94,14 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   };
 
   useEffect(() => {
-    const randomIndices = generateRandomNumbers();
-    const newButtons = [];
-    for (let i = 0; i < 25; i++) {
-      newButtons.push({ content: '', isBomb: false, revealed: false });
-    }
-    randomIndices.forEach(index => {
-      newButtons[index] = { content: '', isBomb: true, revealed: false };
-    });
-    setButtons(newButtons);
-  }, [numRandomBombs]);
+    resetGame(3);
+  }, []);
 
   const revealButtons = () => {
       setTimeout(() => {
         const updatedButtons = buttons.map((button) => ({
           ...button,
-          revealed: true
+          revealed: true,
         }));
         setButtons(updatedButtons);
         setGameInProgress(false);
@@ -122,15 +114,20 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       setLostCredits(gameValue);
       const updatedButtons = [...buttons];
       updatedButtons[index].revealed = true;
-      setButtons(updatedButtons);
-      revealButtons();
+      updatedButtons[index].clicked = true;
+      setTimeout(() => {
+        updatedButtons[index].exploded = true;
+        setButtons(updatedButtons);
+        revealButtons();
+      },3000);
     } else {
       const updatedButtons = [...buttons];
       updatedButtons[index].revealed = true;
+      updatedButtons[index].clicked = true;
       setButtons(updatedButtons);
       setRevealedButtons([...revealedButtons, index]);
       setClickedCount(clickedCount + 1);
-      setCurrentCashout(Math.round((gameValue * (multiplier ** (clickedCount+1))-gameValue)*100)/100);
+      setCurrentCashout(Math.round((gameValue * (multiplier ** (clickedCount+1)))*100)/100);
     }
   };
 
@@ -140,7 +137,9 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       <div className="row">
         {buttons.slice(i, i + 5).map((button, index) => (
           <button key={i + index} onClick={() => handleClick(i + index)} disabled={gameOver || !gameInProgress || revealedButtons.includes(i + index)}>
-            {button.revealed ? button.isBomb ? '💣' : '💚' : ''}
+            <span className={(button.revealed && gameInProgress) ? (button.isBomb ? 'bomb-animate' : 'appear-animate') : (button.revealed && !button.clicked ? 'fade' : '')}>
+              {button.revealed ? (button.exploded ? '💥' : (button.isBomb ? '💣' : '💚')) : ''}
+            </span>
           </button>
         ))}
       </div>
