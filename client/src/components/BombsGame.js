@@ -4,7 +4,6 @@ import './BombsGame.css';
 const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [buttons, setButtons] = useState([]);
   const [activeButton, setActiveButton] = useState(1);
-  const [numRandomBombs, setNumRandomBombs] = useState(3);
   const [gameOver, setGameOver] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [gameValue, setGameValue] = useState(0);
@@ -17,10 +16,11 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [bombsAmount, setBombsAmount] = useState(3);
   const [currentCashout, setCurrentCashout] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  const [startingGame, setStartingGame] = useState(false);
   
-  const generateRandomNumbers = () => {
+  const generateRandomNumbers = (bombsAmount) => {
     const randomIndices = [];
-    while (randomIndices.length < numRandomBombs) {
+    while (randomIndices.length < bombsAmount) {
       const randomIndex = Math.floor(Math.random() * 25);
       if (!randomIndices.includes(randomIndex)) {
         randomIndices.push(randomIndex);
@@ -31,17 +31,17 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
 
   const resetGame = (bombsAmount) => {
     const newButtons = [];
-    const randomIndices = generateRandomNumbers();
+    const randomIndices = generateRandomNumbers(bombsAmount);
     for (let i = 0; i < 25; i++) {
       newButtons.push({ content: '', isBomb: randomIndices.includes(i), revealed: false, exploded: false, clicked: false});
     }
     setButtons(newButtons);
-    setNumRandomBombs(bombsAmount);
     setGameOver(false);
     setGameWon(false);
-    setRevealedButtons([]);
+    setRevealedButtons([]); 
     setClickedCount(0);
-    setCurrentCashout(0);
+    setCurrentCashout(gameValue);
+    setStartingGame(false);
   };
 
   const startGame = (bombsAmount) => {
@@ -49,7 +49,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       document.getElementById('credits-input').focus();
       setErrorMessage("Choose credits amount.")
     }else{
-      setGameInProgress(true);
+      setStartingGame(true);
       switch(bombsAmount){
         default : 
           setMultiplier(1.1);
@@ -61,15 +61,18 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
           setMultiplier(21.37);
           break;
       }
-      modifyBalance(-gameValue);
-      resetGame(bombsAmount);
+      setTimeout(() => {
+        modifyBalance(-gameValue);
+        resetGame(bombsAmount);
+        setGameInProgress(true);
+      },1000);
     }
   }
 
   const handleWin = () =>{
     setWonCredits(currentCashout);
     setGameWon(true);
-    revealButtons();
+    revealButtons(500);
     modifyBalance(Math.round((parseFloat(currentCashout))*100)/100);
   }
 
@@ -97,7 +100,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     resetGame(3);
   }, []);
 
-  const revealButtons = () => {
+  const revealButtons = (timeoutDuration) => {
       setTimeout(() => {
         const updatedButtons = buttons.map((button) => ({
           ...button,
@@ -105,7 +108,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
         }));
         setButtons(updatedButtons);
         setGameInProgress(false);
-      }, 1000);
+      }, timeoutDuration);
   }
 
   const handleClick = (index) => {
@@ -118,7 +121,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       setTimeout(() => {
         updatedButtons[index].exploded = true;
         setButtons(updatedButtons);
-        revealButtons();
+        revealButtons(1000);
       },3000);
     } else {
       const updatedButtons = [...buttons];
@@ -158,9 +161,12 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
         <div className="rowButtons">
           <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={handleInputChange}></input></p>
           {gameInProgress?
-          <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button> 
-            :
-          <button className="startbutton" onClick={isLoggedIn ? () => startGame(bombsAmount) : openModal}>Start Game</button>}
+            <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button> 
+              :
+            <button className="startbutton" onClick={isLoggedIn ? () => startGame(bombsAmount) : openModal} disabled={startingGame}>
+              {startingGame ? "Starting..." : "Start Game"}
+            </button>
+          }
         </div>
         {errorMessage==="" ? "" : <div className="errorMessage">{errorMessage}</div>}
         {gameWon && <p className="win">You won: {wonCredits} credits</p>}
