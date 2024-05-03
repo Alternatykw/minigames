@@ -8,10 +8,10 @@
 	background-color: #333;
 	border-radius: 7.5%;
 	color: white;
-	font-size: 60px;
+	font-size: 50px;
 	height: 6rem;
 	margin: 1px;
-	width: 6rem;
+	width: 9rem;
 }
 .button-grid button:disabled {
 	border-color: buttonborder;
@@ -47,7 +47,7 @@
 .sidebar input {
 	height: 1.95em;
 	text-align: center;
-	width: 5em;
+	width: 4.4em;
 }
 .row {
 	display: flex;

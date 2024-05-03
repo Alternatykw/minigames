@@ -10,6 +10,7 @@
 	position: fixed;
 	top: 0;
 	width: 100%;
+	z-index: 100;
 }
 .navbar-left {
 	margin-left: 2rem;
@@ -50,6 +51,9 @@
 	padding-left: 1rem;
 	padding-right: 1rem;
 }
+.balance-button:hover, .balance-button button {
+	cursor: pointer;
+}
 .navbar ul {
 	list-style-type: none;
 	margin: 0;
@@ -78,7 +82,7 @@
 .login-button:hover {
 	text-decoration: underline;
 }
-.modal-container {
+.modal-container, .balance-container{
 	align-items: center;
 	backdrop-filter: blur(5px);
 	background-color: rgba(0, 0, 0, 0.5);
@@ -90,6 +94,9 @@
 	top: 0;
 	width: 100%;
 	z-index: 1000;
+}
+.balance-container{
+	margin-top: 5rem;
 }
 .modal-content {
 	animation: easeIn 0.75s forwards;

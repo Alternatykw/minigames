@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './LoginForm.css';
 import RegistrationForm from './RegistrationForm';
 import axios from 'axios';

@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import FlyoutMenu from '../components/FlyoutMenu';
 import { useModal } from '../utils/ModalUtils';
 import { useUserData } from '../utils/UserUtils';
+import TowersGame from '../components/TowersGame';
 
 const Towers = () => {
 
@@ -21,21 +22,15 @@ return(
             isModalOpen={isModalOpen}
             openModal={openModal}
             closeModal={closeModal}
-        />        <Navbar
-        modifyBalance={modifyBalance}
-        handleLogout={handleLogout}
-        username={username}
-        balance={balance}
-        isLoggedIn={isLoggedIn}
-        isModalClosing={isModalClosing}
-        isModalOpen={isModalOpen}
-        openModal={openModal}
-        closeModal={closeModal}
-    />
+        /> 
         <FlyoutMenu />
     <div className="content">
-        <h1>Welcome to our Dark Themed Landing Page</h1>
-        <p>There will be towers.</p>
+        <TowersGame
+            balance={balance}
+            isLoggedIn={isLoggedIn}
+            openModal={openModal}
+            modifyBalance={modifyBalance}
+        />
     </div>
     </div>
 )

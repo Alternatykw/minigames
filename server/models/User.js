@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   balance: {
     type: mongoose.Schema.Types.Decimal128,
     required: false,
-    default: 0
+    default: 1000
   },
   profit: {
     type: mongoose.Schema.Types.Decimal128,

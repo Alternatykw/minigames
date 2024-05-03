@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './Navbar.css';
 import FlyoutMenu from './FlyoutMenu';
 import LoginForm from './LoginForm';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyBill1 } from "@fortawesome/free-regular-svg-icons";
+import BalanceModal from './BalanceModal';
 
 const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn, username, balance, handleLogout, modifyBalance}) => {
   const [isFlyoutMenuOpen, setIsFlyoutMenuOpen] = useState(false);
+  const [isBalanceOpen, setIsBalanceOpen] = useState(false);
+  const [isBalanceClosing, setIsBalanceClosing] = useState(false);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -24,12 +27,37 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
   
   const toggleFlyoutMenu = (event) => {
     event.stopPropagation();
-    setIsFlyoutMenuOpen(!isFlyoutMenuOpen);
+    setIsFlyoutMenuOpen(true);
   };
 
   const closeFlyoutMenu = () => {
     setIsFlyoutMenuOpen(false);
   };
+
+  const toggleBalanceMenu = (event) => {
+    event.stopPropagation();
+    setIsBalanceOpen(true);
+  }
+
+  const closeBalanceMenu = () => {
+    setIsBalanceClosing(true);
+    setTimeout(() => {
+      setIsBalanceOpen(false);
+      setIsBalanceClosing(false);
+    }, 500);   
+  }
+  
+  const balanceShort = (balance) => {
+    let shortbalance=0;
+    if (balance >= 1000 && balance < 1000000){
+      shortbalance=(balance / 1000).toFixed(1) + 'K';
+    }
+    else if (balance >= 1000000){
+      shortbalance=(balance/1000000).toFixed(1) + 'M';
+    }
+    else shortbalance=balance;
+    return shortbalance;
+  }
 
   return (
     <nav className="navbar">
@@ -42,9 +70,17 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
 
       {isLoggedIn && (
         <div className="navbar-middle">
-          <div className="balance"><FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balance} </div>
-          <div className="balance-button" onClick={() => modifyBalance(100)}><button>+</button></div>
+          <div className="balance"><FontAwesomeIcon className="icon" icon={faMoneyBill1}/> {balanceShort(balance)} </div>
+          <div className="balance-button" onClick={toggleBalanceMenu}><button>+</button></div>
         </div> 
+      )}
+
+      {isBalanceOpen && (
+        <div className={`balance-container ${isBalanceClosing ? 'closing' : ''}`} onClick={closeBalanceMenu}>
+          <div className={`modal-content ${isBalanceClosing ? 'closing' : ''}`}>
+            <BalanceModal modifyBalance={modifyBalance}/>
+          </div>
+        </div>
       )}
 
       <div className="navbar-right">

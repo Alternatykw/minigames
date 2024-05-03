@@ -7,7 +7,6 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [gameOver, setGameOver] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [gameValue, setGameValue] = useState(0);
-  const [revealedButtons, setRevealedButtons] = useState([]);
   const [gameInProgress, setGameInProgress] = useState(false);
   const [clickedCount, setClickedCount] = useState(0);
   const [multiplier, setMultiplier] = useState(1.1);
@@ -38,7 +37,6 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     setButtons(newButtons);
     setGameOver(false);
     setGameWon(false);
-    setRevealedButtons([]); 
     setClickedCount(0);
     setCurrentCashout(gameValue);
     setStartingGame(false);
@@ -50,9 +48,13 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       setErrorMessage("Choose credits amount.")
     }else{
       setStartingGame(true);
+      setTimeout(() => {
       switch(bombsAmount){
         default : 
           setMultiplier(1.1);
+          break;
+        case 5:
+          setMultiplier(1.2);
           break;
         case 10: 
           setMultiplier(1.5);
@@ -61,7 +63,6 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
           setMultiplier(21.37);
           break;
       }
-      setTimeout(() => {
         modifyBalance(-gameValue);
         resetGame(bombsAmount);
         setGameInProgress(true);
@@ -128,7 +129,6 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       updatedButtons[index].revealed = true;
       updatedButtons[index].clicked = true;
       setButtons(updatedButtons);
-      setRevealedButtons([...revealedButtons, index]);
       setClickedCount(clickedCount + 1);
       setCurrentCashout(Math.round((gameValue * (multiplier ** (clickedCount+1)))*100)/100);
     }
@@ -139,7 +139,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     rows.push(
       <div className="row">
         {buttons.slice(i, i + 5).map((button, index) => (
-          <button key={i + index} onClick={() => handleClick(i + index)} disabled={gameOver || !gameInProgress || revealedButtons.includes(i + index)}>
+          <button key={i + index} onClick={() => handleClick(i + index)} disabled={gameOver || !gameInProgress || button.revealed}>
             <span className={(button.revealed && gameInProgress) ? (button.isBomb ? 'bomb-animate' : 'appear-animate') : (button.revealed && !button.clicked ? 'fade' : '')}>
               {button.revealed ? (button.exploded ? '💥' : (button.isBomb ? '💣' : '💚')) : ''}
             </span>
@@ -152,11 +152,12 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   return (
     <div className="container">
       <div className="sidebar">
-        <h4>Number of Bombs:</h4>
+        <h2>Choose Difficulty:</h2>
         <div className="rowButtons">
-          <button className={`sidebutton${activeButton===1 ? '-active' : ''}`} onClick={() => {setBombsAmount(3); setActiveButton(1);}} disabled={gameInProgress}>3 Bombs</button>
-          <button className={`sidebutton${activeButton===2 ? '-active' : ''}`} onClick={() => {setBombsAmount(10); setActiveButton(2);}} disabled={gameInProgress}>10 Bombs</button>
-          <button className={`sidebutton${activeButton===3 ? '-active' : ''}`} onClick={() => {setBombsAmount(24); setActiveButton(3);}} disabled={gameInProgress}>24 Bombs</button>
+          <button className={`sidebutton${activeButton===1 ? '-active' : ''}`} onClick={() => {setBombsAmount(3); setActiveButton(1);}} disabled={gameInProgress}>Easy</button>
+          <button className={`sidebutton${activeButton===2 ? '-active' : ''}`} onClick={() => {setBombsAmount(5); setActiveButton(2);}} disabled={gameInProgress}>Medium</button>
+          <button className={`sidebutton${activeButton===3 ? '-active' : ''}`} onClick={() => {setBombsAmount(10); setActiveButton(3);}} disabled={gameInProgress}>Hard</button>
+          <button className={`sidebutton${activeButton===4 ? '-active' : ''}`} onClick={() => {setBombsAmount(24); setActiveButton(4);}} disabled={gameInProgress}>Crazy</button>
         </div>
         <div className="rowButtons">
           <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={handleInputChange}></input></p>
