@@ -1,0 +1,19 @@
+.button-grid {
+	display: flex;
+  	justify-content: center;
+  	flex-wrap: wrap;
+	padding: 0em 4em 0em 4em;
+	width: 30rem;
+}
+.button-grid button {
+	background-color: #333;
+	border-radius: 7.5%;
+	color: white;
+	font-size: 50px;
+	height: 6rem;
+	margin: 1px;
+	width: 9rem;
+}
+.button-grid button:disabled {
+	border-color: buttonborder;
+}

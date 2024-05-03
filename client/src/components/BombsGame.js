@@ -40,12 +40,15 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     setClickedCount(0);
     setCurrentCashout(gameValue);
     setStartingGame(false);
-  };
+  }; 
 
   const startGame = (bombsAmount) => {
-    if(gameValue<=0 || isNaN(gameValue)){
+    if (gameValue <= 0 || isNaN(gameValue)) {
       document.getElementById('credits-input').focus();
       setErrorMessage("Choose credits amount.")
+    } else if (gameValue<100){
+      document.getElementById('credits-input').focus();
+      setErrorMessage("Minimum bet is 100.")
     }else{
       setStartingGame(true);
       setTimeout(() => {

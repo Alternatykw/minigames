@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './TowersGame.css';
+import './BombsGame.css';
+import towers from './TowersGame.module.css';
 
 const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [buttons, setButtons] = useState([]);
@@ -16,15 +17,29 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [startingGame, setStartingGame] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
+  const [columns, setColumns] = useState(3);
+  const [rows, setRows] = useState([]);
+
+  const handleDifficulty = (number) => {
+    setActiveButton(number);
+    setColumns(number === 2 ? 2 : 3);
+  }
 
   const resetGame = () => {
     const newButtons = [];
     const bombIndices = [];
+    const bombsPerRow = activeButton === 3 ? 2 : 1;
+
+    const numColumns = columns;
+
     for (let i = 0; i < 8; i++) {
-      const randomIndex = Math.floor(Math.random() * 3) + i * 3;
-      bombIndices.push(randomIndex);
+      for (let j = 0; j < bombsPerRow; j++) {
+        const randomIndex = Math.floor(Math.random() * numColumns) + i * numColumns;
+        bombIndices.push(randomIndex);
+      }
     }
-    for (let i = 0; i < 24; i++) {
+
+    for (let i = 0; i < 8 * numColumns; i++) {
       newButtons.push({ content: '', isBomb: bombIndices.includes(i), revealed: false, exploded: false, clicked: false });
     }
     setButtons(newButtons);
@@ -40,23 +55,12 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     if (gameValue <= 0 || isNaN(gameValue)) {
       document.getElementById('credits-input').focus();
       setErrorMessage("Choose credits amount.")
+    } else if (gameValue<100){
+      document.getElementById('credits-input').focus();
+      setErrorMessage("Minimum bet is 100.")
     } else {
       setStartingGame(true);
       setTimeout(() => {
-        switch (activeButton) {
-          default:
-            setMultiplier(1.1);
-            break;
-          case 2:
-            setMultiplier(1.2);
-            break;
-          case 3:
-            setMultiplier(1.5);
-            break;
-          case 4:
-            setMultiplier(2.5);
-            break;
-        }
         modifyBalance(-gameValue);
         resetGame();
         setGameInProgress(true);
@@ -92,8 +96,44 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   };
 
   useEffect(() => {
+    switch (activeButton) {
+      default:
+        setMultiplier(1.1);
+        break;
+      case 2:
+        setMultiplier(1.2);
+        break;
+      case 3:
+        setMultiplier(1.5);
+        break;
+    }
     resetGame();
-  }, []);
+  }, [activeButton]);
+
+  useEffect(() => {
+    const newRows = [];
+    for (let i = buttons.length; i >= 0; i -= columns) {
+      const rowIndex = Math.floor(i / columns);
+      newRows.push(
+        <div className="row">
+          {buttons.slice(i, i + columns).map((button, index) => (
+            <button 
+              key={i + index} 
+              onClick={() => handleClick(i + index)} 
+              disabled={rowIndex !== clickedCount || gameOver || !gameInProgress || button.revealed || clickedRow === rowIndex}
+            >   
+              <span className={(button.revealed && gameInProgress) ? (button.isBomb ? 'bomb-animate' : 'appear-animate') : (button.revealed && !button.clicked ? 'fade' : '')}>
+                {button.revealed ? (button.exploded ? '💥' : (button.isBomb ? '💣' : '💚')) 
+                  : 
+                ((!buttons.slice(i, i + columns).some(btn => btn.clicked && btn.revealed)) ? ( (multiplier ** (rowIndex+1)).toFixed(2)+"x" ) : (''))}
+              </span>          
+            </button>
+          ))}
+        </div>
+      );
+    }
+    setRows(newRows);
+  }, [buttons, columns, clickedCount, gameOver, gameInProgress, clickedRow, multiplier]);
 
   const revealButtons = (timeoutDuration) => {
     setTimeout(() => {
@@ -107,7 +147,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   }
 
   const handleClick = (index) => {
-    const rowIndex = Math.floor(index / 3);
+    const rowIndex = Math.floor(index / columns);
     if (rowIndex === clickedCount) {
       if (buttons[index].isBomb) {
         setGameOver(true);
@@ -132,37 +172,14 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     }
   };
 
-  const rows = [];
-  for (let i = buttons.length; i >= 0; i -= 3) {
-    const rowIndex = Math.floor(i / 3);
-    rows.push(
-      <div className="row">
-        {buttons.slice(i, i + 3).map((button, index) => (
-          <button 
-            key={i + index} 
-            onClick={() => handleClick(i + index)} 
-            disabled={rowIndex !== clickedCount || gameOver || !gameInProgress || button.revealed || clickedRow === rowIndex}
-          >   
-            <span className={(button.revealed && gameInProgress) ? (button.isBomb ? 'bomb-animate' : 'appear-animate') : (button.revealed && !button.clicked ? 'fade' : '')}>
-              {button.revealed ? (button.exploded ? '💥' : (button.isBomb ? '💣' : '💚')) 
-                : 
-              ((!buttons.slice(i, i + 3).some(btn => btn.clicked && btn.revealed)) ? ( (multiplier ** (rowIndex+1)).toFixed(2)+"x" ) : (''))}
-            </span>          
-          </button>
-        ))}
-      </div>
-    );
-  }
-  
-
   return (
     <div className="container">
       <div className="sidebar">
         <h2>Choose Difficulty:</h2>
         <div className="rowButtons">
-          <button className={`sidebutton${activeButton === 1 ? '-active' : ''}`} onClick={() => { setActiveButton(1); }} disabled={gameInProgress}>Easy</button>
-          <button className={`sidebutton${activeButton === 2 ? '-active' : ''}`} onClick={() => { setActiveButton(2); }} disabled={gameInProgress}>Medium</button>
-          <button className={`sidebutton${activeButton === 3 ? '-active' : ''}`} onClick={() => { setActiveButton(3); }} disabled={gameInProgress}>Hard</button>
+          <button className={`sidebutton${activeButton === 1 ? '-active' : ''}`} onClick={() => { handleDifficulty(1) }} disabled={gameInProgress}>Easy</button>
+          <button className={`sidebutton${activeButton === 2 ? '-active' : ''}`} onClick={() => { handleDifficulty(2) }} disabled={gameInProgress}>Medium</button>
+          <button className={`sidebutton${activeButton === 3 ? '-active' : ''}`} onClick={() => { handleDifficulty(3) }} disabled={gameInProgress}>Hard</button>
         </div>
         <div className="rowButtons">
           <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={handleInputChange}></input></p>
@@ -179,7 +196,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
         {gameOver && <p className="lose"> You lost: {lostCredits} credits</p>}
       </div>
       <div className="bot">
-        <div className="button-grid">
+      <div className={`${towers['button-grid']}`}>
           {rows}
         </div>
       </div>
