@@ -52,7 +52,7 @@ const Slider = () => {
                             gameLink.style.animation = '';
                             setPosition((position - 1 + games.length) % games.length);  
                             setIsAnimating(false);
-                        }, 1010);    
+                        }, 1050);    
                 });
             } else if (direction === "left") {
                 gameLinks.forEach((gameLink, index) => {
@@ -72,7 +72,7 @@ const Slider = () => {
                             gameLink.style.animation = '';
                             setPosition((position + 1) % games.length);
                             setIsAnimating(false);
-                        }, 1010);    
+                        }, 1050);    
                 });
             }
             return prevGames;

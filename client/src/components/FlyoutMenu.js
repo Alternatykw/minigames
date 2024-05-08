@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './FlyoutMenu.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBomb, faHouse, faUpLong } from "@fortawesome/free-solid-svg-icons";
@@ -30,10 +31,26 @@ const FlyoutMenu = ({ isOpen, onClose }) => {
       <div className={`flyout-menu ${isOpen ? 'open' : ''}`}>
         <h1 onClick={onClose}>Dashboard</h1>
         <ul>
-          <li className={isCurrent('') ? 'darker' : ''}><a href={isCurrent('') ? "javascript:void(0);" : "/"}><FontAwesomeIcon icon={faHouse} fixedWidth/> Home page</a></li>
-          <li className={isCurrent('bombs') ? 'darker' : ''}><a href={isCurrent('bombs') ? "javascript:void(0);" : "/bombs"}><FontAwesomeIcon icon={faBomb} fixedWidth/> Bombs</a></li>
-          <li className={isCurrent('towers') ? 'darker' : ''}><a href={isCurrent('towers') ? "javascript:void(0);" : "/towers"}><FontAwesomeIcon icon={faUpLong} fixedWidth/> Towers</a></li>
-          <li className={isCurrent('something') ? 'darker' : ''}><a href="/something"> Something something</a></li>
+          <li className={isCurrent('') ? 'darker' : ''}>
+            <Link to="/">
+              <FontAwesomeIcon icon={faHouse} fixedWidth/> Home page
+            </Link>
+          </li>
+          <li className={isCurrent('bombs') ? 'darker' : ''}>
+            <Link to="/bombs">
+              <FontAwesomeIcon icon={faBomb} fixedWidth/> Bombs
+            </Link>
+          </li>
+          <li className={isCurrent('towers') ? 'darker' : ''}>
+            <Link to="/towers">
+              <FontAwesomeIcon icon={faUpLong} fixedWidth/> Towers
+            </Link>
+          </li>
+          <li className={isCurrent('something') ? 'darker' : ''}>
+            <Link to="/something">
+              Something something
+            </Link>
+          </li>
         </ul>
       </div>
     </div>

@@ -35,6 +35,17 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       newButtons.push({ content: '', isBomb: randomIndices.includes(i), revealed: false, exploded: false, clicked: false});
     }
     setButtons(newButtons);
+    /* Cheats for admin: 
+    console.log("Full grid look:");
+    for (let i = 0; i < 5; i++) {
+      let row = "";
+      for (let j = 0; j < 5; j++) {
+        const index = i * 5 + j;
+        row += newButtons[index].isBomb ? '💣' : '💚';
+      }
+      console.log((i+1) + ". " + row);
+    }
+    */
     setGameOver(false);
     setGameWon(false);
     setClickedCount(0);
@@ -104,6 +115,12 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     resetGame(3);
   }, []);
 
+  useEffect(() => {
+    if (clickedCount === (25-bombsAmount)) {
+      handleWin();
+    }
+  }, [clickedCount]);
+
   const revealButtons = (timeoutDuration) => {
       setTimeout(() => {
         const updatedButtons = buttons.map((button) => ({
@@ -140,7 +157,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const rows = [];
   for (let i = 0; i < buttons.length; i += 5) {
     rows.push(
-      <div className="row">
+      <div className="row" key={i}>
         {buttons.slice(i, i + 5).map((button, index) => (
           <button key={i + index} onClick={() => handleClick(i + index)} disabled={gameOver || !gameInProgress || button.revealed}>
             <span className={(button.revealed && gameInProgress) ? (button.isBomb ? 'bomb-animate' : 'appear-animate') : (button.revealed && !button.clicked ? 'fade' : '')}>
@@ -165,7 +182,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
         <div className="rowButtons">
           <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={handleInputChange}></input></p>
           {gameInProgress?
-            <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button> 
+            <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver || gameWon}>Cashout {currentCashout} </button> 
               :
             <button className="startbutton" onClick={isLoggedIn ? () => startGame(bombsAmount) : openModal} disabled={startingGame}>
               {startingGame ? "Starting..." : "Start Game"}

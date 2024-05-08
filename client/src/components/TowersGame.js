@@ -32,10 +32,37 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
 
     const numColumns = columns;
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 7; i >= 0; i--) {
       for (let j = 0; j < bombsPerRow; j++) {
         const randomIndex = Math.floor(Math.random() * numColumns) + i * numColumns;
         bombIndices.push(randomIndex);
+        /* | cheats for admin | if (j === 0) {
+          let positionOfBomb=randomIndex % numColumns;
+          let output='';
+          if(numColumns===3){
+            switch (positionOfBomb){
+              case 0:
+                output='💣 💚 💚';
+                break;
+              case 1:
+                output='💚 💣 💚';
+                break;
+              case 2:
+                output='💚 💚 💣';
+                break;
+            }
+          }else{
+            switch (positionOfBomb){
+              case 0:
+                output='💣 💚';
+                break;
+              case 1:
+                output='💚 💣';
+                break;
+            }
+          }
+          console.log((i+1)+". "+output);
+        }*/
       }
     }
 
@@ -111,6 +138,12 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   }, [activeButton]);
 
   useEffect(() => {
+    if (clickedCount === 8) {
+      handleWin();
+    }
+  }, [clickedCount]);
+
+  useEffect(() => {
     const newRows = [];
     for (let i = buttons.length; i >= 0; i -= columns) {
       const rowIndex = Math.floor(i / columns);
@@ -174,7 +207,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
 
   return (
     <div className="container">
-      <div className="sidebar">
+      <div className={`${towers['sidebar']}`}>
         <h2>Choose Difficulty:</h2>
         <div className="rowButtons">
           <button className={`sidebutton${activeButton === 1 ? '-active' : ''}`} onClick={() => { handleDifficulty(1) }} disabled={gameInProgress}>Easy</button>
@@ -184,7 +217,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
         <div className="rowButtons">
           <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={handleInputChange}></input></p>
           {gameInProgress ?
-            <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver}>Cashout {currentCashout} </button>
+            <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver || gameWon}>Cashout {currentCashout} </button>
             :
             <button className="startbutton" onClick={isLoggedIn ? () => startGame() : openModal} disabled={startingGame}>
               {startingGame ? "Starting..." : "Start Game"}

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './sites/LandingPage';
 import Bombs from './sites/Bombs';
@@ -8,8 +8,9 @@ import NotFound from './sites/NotFound';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
+const root = createRoot(document.getElementById('root'));
 
-ReactDOM.render(
+root.render(
   <React.StrictMode>
     <Router>
       <Routes>
@@ -19,8 +20,7 @@ ReactDOM.render(
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 
 reportWebVitals();
