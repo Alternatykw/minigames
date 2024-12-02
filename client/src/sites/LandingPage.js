@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './LandingPage.css';
 import Navbar from '../components/Navbar';
 import FlyoutMenu from '../components/FlyoutMenu';

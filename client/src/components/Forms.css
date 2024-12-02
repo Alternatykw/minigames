@@ -1,12 +1,19 @@
-.login-form {
+.login-form,
+.registration-form {
 	background-color: #333;
 	border-radius: 8px;
 	color: #fff;
 	padding: 20px;
+	margin-bottom: 2rem;
+	transition: opacity 0.7s ease;
 }
 .login-form input[type="text"],
 .login-form input[type="password"],
-.login-form button {
+.login-form button,
+.registration-form input[type="text"],
+.registration-form input[type="password"],
+.registration-form input[type="email"],
+.registration-form button {
 	border: none;
 	border-radius: 4px;
 	margin: 5px 0;
@@ -14,25 +21,26 @@
 	width: 100%;
 }
 .login-form input[type="text"],
-.login-form input[type="password"] {
+.login-form input[type="password"],
+.registration-form input[type="text"],
+.registration-form input[type="password"],
+.registration-form input[type="email"] {
 	background-color: white;
 	color: black;
 	width: calc(100% - 20px);
 }
-.login-form button {
+.login-form button,
+.registration-form button {
 	background-color: #4CAF50;
 	color: white;
 	cursor: pointer;
 }
-.login-form button:hover {
+.login-form button:hover,
+.registration-form button:hover {
 	background-color: #45a049;
 }
 .login-container {
 	position: relative;
-}
-.login-form,
-.registration-form {
-	transition: opacity 0.75s ease;
 }
 .login-form.hide,
 .registration-form.hide {
@@ -40,7 +48,6 @@
 	pointer-events: none;
 }
 .registration-form {
-	left: 0;
 	opacity: 0;
 	pointer-events: none;
 	position: absolute;
@@ -50,13 +57,23 @@
 	opacity: 1;
 	pointer-events: auto;
 }
-.register-link:hover {
+.register-link:hover,
+.login-link:hover {
 	color: rgba(255, 255, 255, 0.833);
 	cursor: pointer;
 	text-decoration: underline;
 }
-.error-message {
+.error-message{
 	color: red;
 	font-size: 0.8em;
 	font-weight: 500;
+}
+.success-message {
+	background-color: #45a049;
+	border-radius: 8px;
+	color: white;
+	font-size: 1em;
+	font-weight: 500;
+	margin-bottom: 18rem;
+	padding: 20px;
 }

@@ -1,4 +1,4 @@
-// server.js
+require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -7,11 +7,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
-// Middleware
 app.use(express.json());
 app.use(cors());
+
+const jwtSecret = process.env.JWT_SECRET;
 
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
@@ -21,7 +22,7 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token.split(' ')[1], '062d3ea56aa2e117349f492b1fa4f6dbef379e18');
+    const decoded = jwt.verify(token.split(' ')[1], jwtSecret);
     req.user = decoded;
     next();
   } catch (error) {
@@ -29,14 +30,21 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-// MongoDB connection setup
-mongoose.connect('mongodb://127.0.0.1:27017/minigames')
+
+// Database connection
+const mongoOptions = {
+  user: process.env.MONGO_USER,
+  pass: process.env.MONGO_PASSWORD,
+  authSource: process.env.MONGO_AUTH,
+};
+
+mongoose.connect(process.env.MONGO_DATABASE, mongoOptions)
   .then(() => {
     console.log('Connected to MongoDB');
   })
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Import the User model
+
 const User = require('./models/User');
 
 // Route for handling user registration
@@ -44,21 +52,14 @@ app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
-
-    // Create a new user instance with hashed password
+    const hashedPassword = await bcrypt.hash(password, 10); 
     const newUser = new User({ username, email, password: hashedPassword });
 
-    // Save the user to the database
     await newUser.save();
-
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Error registering user:', error);
@@ -71,20 +72,17 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Find the user by username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // Create and return a JWT token
-    const token = jwt.sign({ userId: user._id }, '062d3ea56aa2e117349f492b1fa4f6dbef379e18', { expiresIn: '1d' });
+    const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '1d' });
     res.status(200).json({ token });
   } catch (error) {
     console.error('Error logging in:', error);
@@ -94,7 +92,6 @@ app.post('/login', async (req, res) => {
 
 app.get('/user', verifyToken, async (req, res) => {
   try {
-    // Fetch user data based on decoded user ID from token
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -110,13 +107,11 @@ app.put('/user/modifybalance', verifyToken, async (req, res) => {
   try {
     const { username, balance } = req.body;
 
-    // Find the user by username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update the user's balance
     user.balance = balance;
     await user.save();
 

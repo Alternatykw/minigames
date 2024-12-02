@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './LoginForm.css';
+import './Forms.css';
 import RegistrationForm from './RegistrationForm';
 import axios from 'axios';
 
@@ -64,6 +64,7 @@ const LoginForm = ({ onClose }) => {
         </p>
       </form>
       <RegistrationForm onClose={handleCloseRegistration} 
+       setShowRegistration={setShowRegistration}
        onLoginClick={() => setShowRegistration(false)}
       />
       

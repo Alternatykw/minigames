@@ -1,10 +1,10 @@
-
 import './Slider.css';
 import question_mark from "../images/question_mark.svg";
 import bomb from "../images/bomb.svg";
 import towers from "../images/towers.svg";
 import dice from "../images/dice.svg";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 const Slider = () => {
 
@@ -18,6 +18,7 @@ const Slider = () => {
     const [position, setPosition] = useState(0);
     const [visibleCards, setVisibleCards] = useState([]);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [playClicked, setPlayClicked] = useState(false);
 
     const randomGame = () => {
         let randomIndex = Math.floor(Math.random() * (games.length - 1)) + 1;
@@ -26,8 +27,18 @@ const Slider = () => {
 
     randomGame();
 
-    const playLink = () => {
-        window.location.href = games[position].link;
+    useEffect(() => {
+        if(playClicked){
+            if(isAnimating){
+                return;
+            }
+            window.location.href = visibleCards[2].link;
+        }
+        
+    }, [playClicked, isAnimating, visibleCards]);
+
+    const playLink = async () => {
+        setPlayClicked(true);
     }
 
     const moveGames = (direction) => {
@@ -87,17 +98,17 @@ const Slider = () => {
         moveGames("left");
     };
 
-    const updateVisibleCards = () => {
+    const updateVisibleCards = useCallback(() => {
         const visibleCards = [];
-        for (let i = position; i < position + 4; i++) {
+        for (let i = position; i < position + games.length; i++) {
             visibleCards.push(games[i % games.length]);
         }
         setVisibleCards(visibleCards);
-    };
+    }, [position, games, setVisibleCards]);
     
     useEffect(() => {
         updateVisibleCards();
-    }, [position]);
+    }, [position, updateVisibleCards]);
 
     return (
         <div className="content">
@@ -107,7 +118,7 @@ const Slider = () => {
                     &lt;
                 </div> 
                 {visibleCards.map((game, index) => (
-                    <a href={game.link} key={index}>
+                    <Link to={game.link} key={index}>
                         <div className={`${index === 0 ? "invisible" : ""} ${index === 2 ? 'middle-' : ''}game-link`}>
                             <div className="photo">
                                 <img src={game.image} alt={game.title} />
@@ -116,7 +127,7 @@ const Slider = () => {
                                 <h2>{game.title}</h2>
                             </div>
                         </div>
-                    </a>
+                    </Link>
                 ))}
                 <div className="arrow" onClick={isAnimating ? null : moveRight}>
                     &gt;

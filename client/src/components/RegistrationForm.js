@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import './RegistrationForm.css';
+import './Forms.css';
 import axios from 'axios';
 
-const RegistrationForm = ({ onLoginClick }) => {
+const RegistrationForm = ({ onLoginClick, setShowRegistration }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,6 +46,10 @@ const RegistrationForm = ({ onLoginClick }) => {
 
       console.log(response.data); // Log the response from the server
       setRegistrationSuccess(true); // Set registration success message
+      setTimeout(() => {
+        setShowRegistration(false);
+        setRegistrationSuccess(false);
+      }, 3000);
     } catch (error) {
       console.error('Registration failed:', error.response.data.message);
       setErrorMessage(error.response.data.message);

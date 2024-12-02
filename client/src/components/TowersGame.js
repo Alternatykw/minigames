@@ -31,40 +31,27 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     const bombsPerRow = activeButton === 3 ? 2 : 1;
 
     const numColumns = columns;
+    console.clear();
+    console.log("Cheats: ")
 
     for (let i = 7; i >= 0; i--) {
-      for (let j = 0; j < bombsPerRow; j++) {
-        const randomIndex = Math.floor(Math.random() * numColumns) + i * numColumns;
-        bombIndices.push(randomIndex);
-        /* | cheats for admin | if (j === 0) {
-          let positionOfBomb=randomIndex % numColumns;
-          let output='';
-          if(numColumns===3){
-            switch (positionOfBomb){
-              case 0:
-                output='💣 💚 💚';
-                break;
-              case 1:
-                output='💚 💣 💚';
-                break;
-              case 2:
-                output='💚 💚 💣';
-                break;
-            }
-          }else{
-            switch (positionOfBomb){
-              case 0:
-                output='💣 💚';
-                break;
-              case 1:
-                output='💚 💣';
-                break;
-            }
-          }
-          console.log((i+1)+". "+output);
-        }*/
+      const rowBombs = new Set();
+      while (rowBombs.size < bombsPerRow) {
+        const randomColumn = Math.floor(Math.random() * numColumns);
+        rowBombs.add(randomColumn);
       }
-    }
+
+        let output = "";
+        for (let col = 0; col < numColumns; col++) {
+          output += rowBombs.has(col) ? "💣 " : "💚 ";
+        }
+        console.log(`${8 - i}. ${output.trim()}`);      
+
+      for (let column of rowBombs) {
+        const bombIndex = i * numColumns + column;
+        bombIndices.push(bombIndex);
+      }
+    }  
 
     for (let i = 0; i < 8 * numColumns; i++) {
       newButtons.push({ content: '', isBomb: bombIndices.includes(i), revealed: false, exploded: false, clicked: false });

@@ -10,6 +10,7 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
   const [isFlyoutMenuOpen, setIsFlyoutMenuOpen] = useState(false);
   const [isBalanceOpen, setIsBalanceOpen] = useState(false);
   const [isBalanceClosing, setIsBalanceClosing] = useState(false);
+  const [userDropdown, setUserDropdown] = useState(false);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -18,10 +19,10 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
       }
     }
 
-    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('mousedown', handleOutsideClick);
 
     return () => {
-      document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [isModalOpen, closeModal]);
   
@@ -59,6 +60,10 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
     return shortbalance;
   }
 
+  const handleUserDropdown = () => {
+    setUserDropdown(!userDropdown);
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -94,10 +99,21 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
       ) : (
 
       <div className="navbar-right">
-        {username}
-        <button className="logout-button" onClick={handleLogout}> {/*move to flyout menu or profile dropdown*/}
-          Logout
-        </button>
+        <div className="user-dropdown" onClick={handleUserDropdown}>
+          {username}
+          {userDropdown && 
+
+          <div>
+              <button className="user-button">
+                Account
+              </button>
+              <button className="user-button" onClick={handleLogout}>
+                Logout
+              </button>
+          </div>
+
+          }
+        </div>
       </div>
 
       )}
