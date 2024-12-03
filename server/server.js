@@ -52,9 +52,13 @@ app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ message: 'This email is already registered.' });
+    }
+    const existingUser = await User.findOne ({ username });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'This username is already taken.' });
     }
     const hashedPassword = await bcrypt.hash(password, 10); 
     const newUser = new User({ username, email, password: hashedPassword });
@@ -90,29 +94,34 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Route for getting user info
 app.get('/user', verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json({ username: user.username, balance: user.balance });
+    res.status(200).json({ username: user.username, email: user.email, balance: user.balance, profit: user.profit, permissions: user.permissions });
   } catch (error) {
     console.error('Error fetching user data:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
+// Route for modifying balance
 app.put('/user/modifybalance', verifyToken, async (req, res) => {
   try {
-    const { username, balance } = req.body;
+    const { balance, profit } = req.body;
 
-    const user = await User.findOne({ username });
+    const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     user.balance = balance;
+    if (profit){
+      user.profit = profit;
+    }
     await user.save();
 
     res.status(200).json({ message: 'Balance added successfully' });

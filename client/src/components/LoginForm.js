@@ -8,6 +8,7 @@ const LoginForm = ({ onClose }) => {
   const [password, setPassword] = useState('');
   const [showRegistration, setShowRegistration] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -18,16 +19,22 @@ const LoginForm = ({ onClose }) => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); 
+    setLoading(true);
     try {
       const response = await axios.post('http://localhost:5000/login', { username, password });
       const token = response.data.token;
       localStorage.setItem('token', token);
       window.location.reload(false);
     } catch (error) {
-      console.error('Error logging in:', error.response.data.message);
-      setErrorMessage(error.response.data.message);
+      if (error.response && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      }
+      else{
+        setErrorMessage("The server is currently unavailable, please try again later.")
+      }
     }
+    setLoading(false);
   };
 
   const handleRegisterClick = (event) => {
@@ -57,7 +64,9 @@ const LoginForm = ({ onClose }) => {
           onChange={handlePasswordChange}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? <div className="spinner"></div> : 'Login'}
+        </button>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <p onClick={handleRegisterClick} className="register-link">
           Don't have an account? Register

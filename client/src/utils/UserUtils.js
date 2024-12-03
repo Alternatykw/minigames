@@ -3,13 +3,23 @@ import axios from 'axios';
 
 export const useUserData = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-  const [balance, setBalance] = useState(0);
+  const [user, setUser] = useState({
+    username: '',
+    email: '',
+    balance: 0,
+    profit: 0,
+    permissions: ''
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setUsername('');
-    setBalance(0);
+    setUser({
+      username: '',
+      email: '',
+      balance: 0,
+      profit: 0,
+      permissions: ''
+    });
     setIsLoggedIn(false);
     window.location.reload(false);
   };
@@ -24,41 +34,66 @@ export const useUserData = () => {
         }
       })
       .then(response => {
-        setUsername(response.data.username);
-        setBalance(response.data.balance.$numberDecimal);
+        const { username, email, balance, profit, permissions } = response.data;
+        setUser({
+          username,
+          email,
+          balance: parseFloat(balance.$numberDecimal), 
+          profit: parseFloat(profit.$numberDecimal),   
+          permissions
+        });
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
-        if (error.response && error.response.status === 401) {
+        if (
+          !error.response || 
+          (error.response && error.response.status >= 401)
+        ) {
           localStorage.removeItem('token');
+          setUser({
+            username: '',
+            email: '',
+            balance: 0,
+            profit: 0,
+            permissions: ''
+          });
           setIsLoggedIn(false);
         }
       });
     } else {
       setIsLoggedIn(false);
     }
-  }, [setIsLoggedIn, setUsername, setBalance]);
+  }, [setIsLoggedIn, setUser]);
 
-  const modifyBalance = (updateBalanceValue) => {
-    let updatedBalance = Math.round((parseFloat(balance) + parseFloat(updateBalanceValue)) * 100) / 100;
+  const modifyBalance = (updateBalanceValue, type) => {
+    let updatedBalance = Math.round((parseFloat(user.balance) + parseFloat(updateBalanceValue)) * 100) / 100;
+    let updatedProfit = Math.round((parseFloat(user.profit) + parseFloat(updateBalanceValue)) * 100) / 100;
+
+    const payload = {
+      balance: updatedBalance
+    };
+    if (type === 'game') {
+      payload.profit = updatedProfit;
+    }
 
     const token = localStorage.getItem('token');
     if (token) {
-      axios.put('http://localhost:5000/user/modifybalance', {
-        username: username,
-        balance: updatedBalance
-      }, {
+      axios.put('http://localhost:5000/user/modifybalance', payload, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
       .then(() => {
-        setBalance(updatedBalance);
+        setUser((prevUser) => ({
+          ...prevUser,
+          balance: updatedBalance,
+          ...(type === 'game' && { profit: updatedProfit }) 
+        }));
       }).catch(error => {
         console.error('Error updating balance:', error);
       });
     }
   }
 
-  return { handleLogout, isLoggedIn, username, balance, modifyBalance };
+  return { handleLogout, isLoggedIn, user, modifyBalance };
 };

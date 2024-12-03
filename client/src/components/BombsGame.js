@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './BombsGame.css';
 
-const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
+const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   const [buttons, setButtons] = useState([]);
   const [activeButton, setActiveButton] = useState(1);
   const [gameOver, setGameOver] = useState(false);
@@ -16,6 +16,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [currentCashout, setCurrentCashout] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const [startingGame, setStartingGame] = useState(false);
+  const balance = user.balance;
   
   const generateRandomNumbers = (bombsAmount) => {
     const randomIndices = [];
@@ -35,17 +36,18 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
       newButtons.push({ content: '', isBomb: randomIndices.includes(i), revealed: false, exploded: false, clicked: false});
     }
     setButtons(newButtons);
-    /* Cheats for admin: 
-    console.log("Full grid look:");
-    for (let i = 0; i < 5; i++) {
-      let row = "";
-      for (let j = 0; j < 5; j++) {
-        const index = i * 5 + j;
-        row += newButtons[index].isBomb ? '💣' : '💚';
+    if (user.permissions === 'admin'){
+      console.clear();
+      console.log("Full grid look:");
+      for (let i = 0; i < 5; i++) {
+        let row = "";
+        for (let j = 0; j < 5; j++) {
+          const index = i * 5 + j;
+          row += newButtons[index].isBomb ? '💣' : '💚';
+        }
+        console.log((i+1) + ". " + row);
       }
-      console.log((i+1) + ". " + row);
     }
-    */
     setGameOver(false);
     setGameWon(false);
     setClickedCount(0);
@@ -77,7 +79,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
           setMultiplier(21.37);
           break;
       }
-        modifyBalance(-gameValue);
+        modifyBalance(-gameValue, 'game');
         resetGame(bombsAmount);
         setGameInProgress(true);
       },1000);
@@ -88,7 +90,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     setWonCredits(currentCashout);
     setGameWon(true);
     revealButtons(500);
-    modifyBalance(Math.round((parseFloat(currentCashout))*100)/100);
+    modifyBalance((Math.round((parseFloat(currentCashout))*100)/100), 'game');
   }
 
   const handleInputChange = (e) => {

@@ -7,7 +7,7 @@ import { useUserData } from '../utils/UserUtils';
 
 const Bombs = () => {
 
-const { isLoggedIn, username, balance, handleLogout, modifyBalance } = useUserData();
+const { isLoggedIn, user, handleLogout, modifyBalance } = useUserData();
 const { isModalOpen, isModalClosing, openModal, closeModal } = useModal();
 
 return(
@@ -15,8 +15,7 @@ return(
         <Navbar
             modifyBalance={modifyBalance}
             handleLogout={handleLogout}
-            username={username}
-            balance={balance}
+            user={user}
             isLoggedIn={isLoggedIn}
             isModalClosing={isModalClosing}
             isModalOpen={isModalOpen}
@@ -26,7 +25,7 @@ return(
         <FlyoutMenu />
     <div className="content">
         <BombsGame
-            balance={balance}
+            user={user}
             isLoggedIn={isLoggedIn}
             openModal={openModal}
             modifyBalance={modifyBalance}

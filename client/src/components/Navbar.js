@@ -6,11 +6,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyBill1 } from "@fortawesome/free-regular-svg-icons";
 import BalanceModal from './BalanceModal';
 
-const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn, username, balance, handleLogout, modifyBalance}) => {
+const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn, user, handleLogout, modifyBalance}) => {
   const [isFlyoutMenuOpen, setIsFlyoutMenuOpen] = useState(false);
   const [isBalanceOpen, setIsBalanceOpen] = useState(false);
   const [isBalanceClosing, setIsBalanceClosing] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
+  const username = user.username;
+  const balance = user.balance;
 
   useEffect(() => {
     const handleOutsideClick = (event) => {

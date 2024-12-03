@@ -5,7 +5,7 @@ const BalanceModal = ({ modifyBalance }) => {
     const [money, setMoney] = useState();
 
     const handleBalanceButton = (value) => {
-        modifyBalance(value);
+        modifyBalance(value, 'topup');
         setIsButtonClicked(true);
         setMoney(value);
     }

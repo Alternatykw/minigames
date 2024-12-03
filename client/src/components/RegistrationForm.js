@@ -10,6 +10,7 @@ const RegistrationForm = ({ onLoginClick, setShowRegistration }) => {
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -20,7 +21,9 @@ const RegistrationForm = ({ onLoginClick, setShowRegistration }) => {
   };
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+    const passwordValue = event.target.value;
+    setPassword(passwordValue);
+    setPasswordsMatch(passwordValue === confirmPassword);
   };
 
   const handleConfirmPasswordChange = (event) => {
@@ -31,6 +34,7 @@ const RegistrationForm = ({ onLoginClick, setShowRegistration }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     if (password !== confirmPassword) {
       setPasswordsMatch(false);
@@ -38,22 +42,25 @@ const RegistrationForm = ({ onLoginClick, setShowRegistration }) => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/register', {
+      await axios.post('http://localhost:5000/register', {
         username,
         email,
         password
       });
-
-      console.log(response.data); // Log the response from the server
-      setRegistrationSuccess(true); // Set registration success message
+      setRegistrationSuccess(true); 
       setTimeout(() => {
         setShowRegistration(false);
         setRegistrationSuccess(false);
       }, 3000);
     } catch (error) {
-      console.error('Registration failed:', error.response.data.message);
-      setErrorMessage(error.response.data.message);
+      if (error.response && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      }
+      else{
+        setErrorMessage("The server is currently unavailable, please try again later.")
+      }
     }
+    setLoading(false);
   };
 
   return (
@@ -90,9 +97,11 @@ const RegistrationForm = ({ onLoginClick, setShowRegistration }) => {
             onChange={handleConfirmPasswordChange}
             required
           />
+          <button type="submit" disabled={loading || !passwordsMatch}>
+            {loading ? <div className="spinner"></div> : 'Register'}
+          </button>
           {!passwordsMatch && <p className="error-message">Passwords do not match</p>}
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <button type="submit" disabled={!passwordsMatch}>Register</button>
           <p className="login-link" onClick={onLoginClick}>Already have an account? Login</p>
         </form>
       )}

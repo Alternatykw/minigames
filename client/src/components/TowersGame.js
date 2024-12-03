@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './BombsGame.css';
 import towers from './TowersGame.module.css';
 
-const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
+const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
   const [buttons, setButtons] = useState([]);
   const [activeButton, setActiveButton] = useState(1);
   const [gameOver, setGameOver] = useState(false);
@@ -19,6 +19,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
   const [clickedRow, setClickedRow] = useState(null);
   const [columns, setColumns] = useState(3);
   const [rows, setRows] = useState([]);
+  const balance = user.balance;
 
   const handleDifficulty = (number) => {
     setActiveButton(number);
@@ -31,8 +32,10 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     const bombsPerRow = activeButton === 3 ? 2 : 1;
 
     const numColumns = columns;
-    console.clear();
-    console.log("Cheats: ")
+    
+    if (user.permissions === 'admin'){
+      console.log("Full grid look: ")
+    }
 
     for (let i = 7; i >= 0; i--) {
       const rowBombs = new Set();
@@ -41,11 +44,13 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
         rowBombs.add(randomColumn);
       }
 
+      if (user.permissions === 'admin'){
         let output = "";
         for (let col = 0; col < numColumns; col++) {
           output += rowBombs.has(col) ? "💣 " : "💚 ";
         }
-        console.log(`${8 - i}. ${output.trim()}`);      
+        console.log(`${8 - i}. ${output.trim()}`);   
+      }   
 
       for (let column of rowBombs) {
         const bombIndex = i * numColumns + column;
@@ -75,7 +80,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     } else {
       setStartingGame(true);
       setTimeout(() => {
-        modifyBalance(-gameValue);
+        modifyBalance(-gameValue, 'game');
         resetGame();
         setGameInProgress(true);
       }, 1000);
@@ -86,7 +91,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, balance }) => {
     setWonCredits(currentCashout);
     setGameWon(true);
     revealButtons(500);
-    modifyBalance(Math.round((parseFloat(currentCashout)) * 100) / 100);
+    modifyBalance((Math.round((parseFloat(currentCashout)) * 100) / 100), 'game');
   }
 
   const handleInputChange = (e) => {

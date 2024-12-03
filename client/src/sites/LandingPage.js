@@ -8,7 +8,7 @@ import { useUserData } from '../utils/UserUtils';
 
 const LandingPage = () => {
     
-    const { isLoggedIn, username, balance, handleLogout, modifyBalance } = useUserData();
+    const { isLoggedIn, user, handleLogout, modifyBalance } = useUserData();
     const { isModalOpen, isModalClosing, openModal, closeModal } = useModal();
 
     return (
@@ -16,8 +16,7 @@ const LandingPage = () => {
         <Navbar
             modifyBalance={modifyBalance}
             handleLogout={handleLogout}
-            username={username}
-            balance={balance}
+            user={user}
             isLoggedIn={isLoggedIn}
             isModalClosing={isModalClosing}
             isModalOpen={isModalOpen}
