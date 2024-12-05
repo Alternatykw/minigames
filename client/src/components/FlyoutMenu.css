@@ -16,6 +16,10 @@
 	display: block;
 	padding: 1rem 0rem;
 	width: calc(100% - 3px);
+	border-top: 1px solid #333;
+}
+.flyout-menu li:last-child{
+	border-bottom: 1px solid #333;
 }
 .flyout-menu h1 {
 	cursor: pointer;
@@ -26,12 +30,12 @@
 	margin-left: 2rem;
 	text-align: left;
 	text-decoration: none;
-	transition: color 0.6s ease;
+	transition: color 0.5s ease;
 }
 .flyout-menu a:hover {
 	color: white;
 	text-decoration: none;
-	transition: color 0.6s ease;
+	transition: color 0.5s ease;
 }
 .overlay {
 	background-color: rgba(0, 0, 0, 0.5);

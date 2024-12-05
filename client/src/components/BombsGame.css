@@ -20,35 +20,6 @@
 	display: flex;
 	margin-top: 4em;
 }
-.sidebar {
-	align-items: flex-start;
-	background-color: #333;
-	border: 2px solid #555;
-	display: flex;
-	flex-direction: column;
-	height: 30rem;
-	padding: 0.5rem 3rem 0rem 3rem;
-}
-.sidebutton, .sidebutton-active {
-	border:none;
-	border-left: 2px solid black;
-	height: 2rem;
-	width: 5rem;
-}
-.sidebutton:hover{
-	cursor: pointer;
-}
-.sidebutton-active {
-	font-weight: 550;
-}
-.sidebutton:first-child, .sidebutton-active:first-child {
-	border-left: none;
-}
-.sidebar input {
-	height: 1.95em;
-	text-align: center;
-	width: 5em;
-}
 .row {
 	display: flex;
 }

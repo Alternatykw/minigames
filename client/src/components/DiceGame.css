@@ -1,0 +1,122 @@
+.dice-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+  
+.top {
+    flex: 8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+	border: 2px solid #555;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+}
+
+.top input:first-child{
+    margin-right: 0.5rem;
+}
+
+.top input:last-child{
+    margin-left: 0.5rem;
+}
+
+.bottombar {
+    flex: 2;
+    width: 40rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+	background-color: #333;
+	border: 2px solid #555;
+	padding: 0.5rem 3rem 1rem 3rem;
+}
+
+.credits {
+    display: flex;
+    align-items: center;
+}
+
+.bottombar-right {
+    margin-left: 5rem;
+    margin-bottom: 1rem;
+}
+
+.bottombar-right input, .slider-values input{
+    height: 1.95em;
+    text-align: center;
+    width: 5em;
+}
+
+.bottombar-right input{
+    margin-bottom: -0.337rem;
+    margin-left: 0.5rem;
+}
+
+.dice-startbutton {
+	background-color: rgb(103, 145, 40);
+	border: none;
+	color: white;
+	height: 2rem;
+	width: 10rem;
+}
+.dice-startbutton:hover {
+	background-color: rgb(0, 130, 0);
+	cursor: pointer;
+}
+.dice-startbutton:active {
+	background-color: darkgreen;
+	transition: color 0.4s ease;
+}
+.dice-startbutton:disabled {
+	background-color: darkgreen;
+	cursor: auto;
+	opacity: 0.75;
+}
+
+.slider {
+    width: 100%;
+
+}
+  
+.dice-content {
+    width: 70%;
+}
+
+.slider {
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    padding: 1.5rem 0rem;
+}
+  
+.slider-thumb {
+    height: 1.5rem;
+    width: 1.5rem;
+    background: #2c802f;
+    border-radius: 50%;
+    cursor: grab;
+    border: 2px solid darkgreen;
+    margin-top: -5px;
+}
+
+.slider-track.slider-track-0 {
+    background: #4caf50;
+    height: 15px;
+    border-radius: 1rem;
+}
+
+.slider-track.slider-track-1 {
+    background: red;
+    height: 15px;
+    border-radius: 1rem;
+}
+
+.slider-values{
+    padding-bottom: 1rem;
+}

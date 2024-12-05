@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './BombsGame.css';
+import './Sidebar.css';
 import towers from './TowersGame.module.css';
 
 const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
@@ -117,10 +118,10 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
   useEffect(() => {
     switch (activeButton) {
       default:
-        setMultiplier(1.1);
+        setMultiplier(1.2);
         break;
       case 2:
-        setMultiplier(1.2);
+        setMultiplier(1.33);
         break;
       case 3:
         setMultiplier(1.5);
@@ -199,7 +200,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
 
   return (
     <div className="container">
-      <div className={`${towers['sidebar']}`}>
+      <div className='sidebar'>
         <h2>Choose Difficulty:</h2>
         <div className="rowButtons">
           <button className={`sidebutton${activeButton === 1 ? '-active' : ''}`} onClick={() => { handleDifficulty(1) }} disabled={gameInProgress}>Easy</button>

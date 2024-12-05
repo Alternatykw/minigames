@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './FlyoutMenu.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBomb, faHouse, faUpLong } from "@fortawesome/free-solid-svg-icons";
+import { faBomb, faHouse, faUpLong, faDice } from "@fortawesome/free-solid-svg-icons";
 
 
 const FlyoutMenu = ({ isOpen, onClose }) => {
@@ -44,6 +44,11 @@ const FlyoutMenu = ({ isOpen, onClose }) => {
           <li className={isCurrent('towers') ? 'darker' : ''}>
             <Link to="/towers">
               <FontAwesomeIcon icon={faUpLong} fixedWidth/> Towers
+            </Link>
+          </li>
+          <li className={isCurrent('dice') ? 'darker' : ''}>
+            <Link to="/dice">
+              <FontAwesomeIcon icon={faDice} fixedWidth/> Dice
             </Link>
           </li>
           <li className={isCurrent('something') ? 'darker' : ''}>

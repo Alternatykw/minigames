@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './BombsGame.css';
+import './Sidebar.css';
 
 const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   const [buttons, setButtons] = useState([]);
@@ -121,7 +122,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
     if (clickedCount === (25-bombsAmount)) {
       handleWin();
     }
-  }, [clickedCount]);
+  }, [clickedCount, bombsAmount]);
 
   const revealButtons = (timeoutDuration) => {
       setTimeout(() => {
