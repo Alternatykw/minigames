@@ -113,6 +113,10 @@
 	animation: easeOut 0.75s forwards;
 }
 .user-dropdown {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	width: 5rem;
 	cursor: pointer;
 	position: absolute;
 	background-color: #333;

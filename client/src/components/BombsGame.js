@@ -95,6 +95,12 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   }
 
   const handleInputChange = (e) => {
+    let zeroCheck = e.target.value;
+
+    if (e.target.value !== '0') {
+      zeroCheck = zeroCheck.replace(/^0+/, '');
+      e.target.value = zeroCheck;
+    }
     if (!gameInProgress) {
       setGameValue(parseFloat(e.target.value));
     }
@@ -157,6 +163,12 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
     }
   };
 
+  const handleBalancePress = (e) => {
+    if (['-', '+', 'e', 'E'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   const rows = [];
   for (let i = 0; i < buttons.length; i += 5) {
     rows.push(
@@ -183,7 +195,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
           <button className={`sidebutton${activeButton===4 ? '-active' : ''}`} onClick={() => {setBombsAmount(24); setActiveButton(4);}} disabled={gameInProgress}>Crazy</button>
         </div>
         <div className="rowButtons">
-          <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onChange={handleInputChange}></input></p>
+          <p>Credits: <input type="number" id="credits-input" disabled={gameInProgress} defaultValue="0" onKeyPress={handleBalancePress} onChange={handleInputChange}></input></p>
           {gameInProgress?
             <button className="cashoutButton" onClick={() => handleWin()} disabled={!gameInProgress || gameOver || gameWon}>Cashout {currentCashout} </button> 
               :

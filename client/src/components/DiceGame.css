@@ -78,11 +78,6 @@
 	cursor: auto;
 	opacity: 0.75;
 }
-
-.slider {
-    width: 100%;
-
-}
   
 .dice-content {
     width: 70%;
@@ -93,6 +88,7 @@
     height: 10px;
     border-radius: 5px;
     padding: 1.5rem 0rem;
+    transition: all 0.3s ease;
 }
   
 .slider-thumb {
@@ -103,20 +99,50 @@
     cursor: grab;
     border: 2px solid darkgreen;
     margin-top: -5px;
+    transition: transform 0.3s ease;
+    will-change: transform;
 }
 
-.slider-track.slider-track-0 {
+.slider-track-green.slider-track-green-0, .slider-track-green.slider-track-green-2 {
     background: #4caf50;
     height: 15px;
     border-radius: 1rem;
+    transition: background-color 0.3s ease;
 }
 
-.slider-track.slider-track-1 {
+.slider-track-green.slider-track-green-1 {
     background: red;
     height: 15px;
     border-radius: 1rem;
+    transition: background-color 0.3s ease;
 }
 
-.slider-values{
-    padding-bottom: 1rem;
+.slider-track-red.slider-track-red-0, .slider-track-red.slider-track-red-2 {
+    background: red;
+    height: 15px;
+    border-radius: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.slider-track-red.slider-track-red-1 {
+    background: #4caf50;
+    height: 15px;
+    border-radius: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.slider-values {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.slider-values input {
+    margin-top: -0.25rem;
+}
+
+.roll-label {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    font-size: 1.2em;
 }
