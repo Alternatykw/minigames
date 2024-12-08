@@ -2,25 +2,37 @@ import React, { useState, useEffect } from 'react';
 import './BombsGame.css';
 import './Sidebar.css';
 import towers from './TowersGame.module.css';
+import { useGameUtils } from '../utils/GameUtils';
 
 const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
+  const {
+    handleInputChange,
+    handleBalancePress,
+    gameOver,
+    setGameOver,
+    gameWon,
+    setGameWon,
+    gameValue,
+    gameInProgress,
+    setGameInProgress,
+    multiplier,
+    setMultiplier,
+    wonCredits,
+    setWonCredits,
+    lostCredits,
+    setLostCredits,
+    errorMessage,
+    setErrorMessage,
+    startingGame,
+    setStartingGame
+  } = useGameUtils();
   const [buttons, setButtons] = useState([]);
   const [activeButton, setActiveButton] = useState(1);
-  const [gameOver, setGameOver] = useState(false);
-  const [gameWon, setGameWon] = useState(false);
-  const [gameValue, setGameValue] = useState(0);
-  const [gameInProgress, setGameInProgress] = useState(false);
   const [clickedCount, setClickedCount] = useState(0);
-  const [multiplier, setMultiplier] = useState(1.1);
-  const [wonCredits, setWonCredits] = useState(0);
-  const [lostCredits, setLostCredits] = useState(0);
   const [currentCashout, setCurrentCashout] = useState(0);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [startingGame, setStartingGame] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
   const [columns, setColumns] = useState(3);
   const [rows, setRows] = useState([]);
-  const balance = user.balance;
 
   const handleDifficulty = (number) => {
     setActiveButton(number);
@@ -94,38 +106,6 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
     revealButtons(500);
     modifyBalance((Math.round((parseFloat(currentCashout)) * 100) / 100), 'game');
   }
-
-  const handleInputChange = (e) => {
-    let zeroCheck = e.target.value;
-
-    if (e.target.value !== '0') {
-      zeroCheck = zeroCheck.replace(/^0+/, '');
-      e.target.value = zeroCheck;
-    }
-    if (!gameInProgress) {
-      setGameValue(parseFloat(e.target.value));
-    }
-    if (errorMessage !== '' && (e.target.value !== 0 || isNaN(e.target.value))) {
-      setErrorMessage('');
-    }
-    if (e.target.value > parseFloat(balance)) {
-      e.target.value = parseFloat(balance);
-      setGameValue(parseFloat(balance));
-    }
-    if (e.target.value > 10000) {
-      e.target.value = 10000;
-      setGameValue(10000);
-    }
-    if (e.target.value < 0) {
-      e.target.value = 0;
-    }
-  };
-
-  const handleBalancePress = (e) => {
-    if (['-', '+', 'e', 'E'].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   useEffect(() => {
     switch (activeButton) {

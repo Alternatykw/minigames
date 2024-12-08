@@ -1,22 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import ReactSlider from 'react-slider';
 import './DiceGame.css';
+import { useGameUtils } from '../utils/GameUtils';
 
 const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
+  const {
+    handleInputChange,
+    handleBalancePress,
+    gameOver,
+    setGameOver,
+    gameWon,
+    setGameWon,
+    gameValue,
+    gameInProgress,
+    setGameInProgress,
+    multiplier,
+    setMultiplier,
+    wonCredits,
+    setWonCredits,
+    lostCredits,
+    setLostCredits,
+    errorMessage,
+    setErrorMessage
+  } = useGameUtils();
   const [activeButton, setActiveButton] = useState(1);
-  const [gameOver, setGameOver] = useState(false);
-  const [gameWon, setGameWon] = useState(false);
-  const [gameValue, setGameValue] = useState(0);
-  const [gameInProgress, setGameInProgress] = useState(false);
-  const [wonCredits, setWonCredits] = useState(0);
-  const [lostCredits, setLostCredits] = useState(0);
-  const [errorMessage, setErrorMessage] = useState("");
   const [sliderValue, setSliderValue] = useState(50);
   const [sliderValues, setSliderValues] = useState([25, 75]);
   const [previousValues, setPreviousValues] = useState([25, 75]);
-  const balance = user.balance;
+  const [indicatingArrow, setIndicatingArrow] = useState(50);
 
   useEffect(() => {
+    // change to onblur
     setPreviousValues(sliderValues);
     if((sliderValues[0]>=sliderValues[1]) && (sliderValues[1] === previousValues[1])){
       setPreviousValues([sliderValues[1] - 1, sliderValues[1]]);
@@ -24,8 +38,32 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
     }else if((sliderValues[1]<=sliderValues[0]) && (sliderValues[0] === previousValues[0])){
       setPreviousValues([sliderValues[0], sliderValues[0] + 1]);
       setSliderValues([sliderValues[0], sliderValues[0] + 1]);
+    }else if(sliderValues[0]===0 && sliderValues[1]===100){
+      setSliderValues([1,100]);
     }
-  }, [sliderValues, previousValues]);
+    //
+    
+    let formula;
+    switch(activeButton){
+      default: 
+        formula=sliderValue;
+        break;
+      case 2:
+        formula=(100-sliderValue);
+        break;
+      case 3: 
+        formula=(sliderValues[1]-sliderValues[0]);
+        break;
+      case 4: 
+        formula=(100-(sliderValues[1]-sliderValues[0]));
+        break;
+    }
+    if (formula>75){
+      setMultiplier((100+(100-formula+(0.1*(100-formula))))/100);
+    }else{
+      setMultiplier(100/(formula+(100/(100-formula))));
+    }
+  }, [activeButton, sliderValue, sliderValues, previousValues]);
 
   const startGame = () => {
     if (gameValue <= 0 || isNaN(gameValue)) {
@@ -38,34 +76,15 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       modifyBalance(-gameValue, 'game');
       setGameInProgress(true);
     }
-    // game logic here
+    setTimeout(() => {
+      setIndicatingArrow(Math.floor(Math.random() * 101));
+    }, 500); 
   }
 
-  const handleInputChange = (e) => {
-    let zeroCheck = e.target.value;
-
-    if (e.target.value !== '0') {
-      zeroCheck = zeroCheck.replace(/^0+/, '');
-      e.target.value = zeroCheck;
+  const handleSliderInvalid = (e) => {
+    if (e.target.value === "" || parseInt(e.target.value)<=0 ) {
+      setSliderValue(1);
     }
-    if (!gameInProgress) {
-      setGameValue(parseFloat(e.target.value));
-    }
-    if (errorMessage !== '' && (e.target.value !== 0 || isNaN(e.target.value))) {
-      setErrorMessage('');
-    }
-    if (e.target.value > parseFloat(balance)){
-      e.target.value=parseFloat(balance);
-      setGameValue(parseFloat(balance));
-    }
-    if (e.target.value > 10000) {
-      e.target.value=10000;
-      setGameValue(10000);
-    }
-    if (e.target.value < 0){
-      e.target.value=0;
-    }
-
   };
 
   const handleSliderChange = (value) => {
@@ -79,29 +98,21 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   const handleSliderValue = (e) => {
     let newValue = e.target.value;
 
-    if (newValue === ''){
-      setSliderValue(0);
-    }
-
     if (newValue !== "0") {
-      newValue = newValue.replace(/^0+/, '');
+      newValue = newValue.replace(/^0+/, '0');
       e.target.value = newValue;
     }
   
-    if (!isNaN(newValue) && newValue >= 0 && newValue <= 100) {
-      setSliderValue(newValue);
+    if (!isNaN(newValue) && newValue >= 0 && newValue < 100) {
+      setSliderValue(parseInt(newValue));
     }
   };
 
   const handleSliderValuesLeft = (e) => {
     let newValue = e.target.value;
 
-    if (newValue === ''){
-      setSliderValues(0, sliderValues[1]);
-    }
-
     if (newValue !== "0") {
-      newValue = newValue.replace(/^0+/, '');
+      newValue = newValue.replace(/^0+/, '0');
       e.target.value = newValue;
     }
 
@@ -109,7 +120,7 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       newValue = sliderValues[1] - 1; 
     }
 
-    const newValues = [newValue, sliderValues[1]];
+    const newValues = [parseInt(newValue), sliderValues[1]];
   
     if (!isNaN(newValue) && newValue >= 0 && newValue <= 100) {
       setSliderValues(newValues);
@@ -120,7 +131,7 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
     let newValue = e.target.value;
 
     if (newValue !== "0") {
-      newValue = newValue.replace(/^0+/, '');
+      newValue = newValue.replace(/^0+/, '0');
       e.target.value = newValue;
     }
 
@@ -128,7 +139,7 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       newValue = sliderValues[0] + 1; 
     }
 
-    const newValues = [sliderValues[0], newValue];
+    const newValues = [sliderValues[0], parseInt(newValue)];
   
     if (!isNaN(newValue) && newValue >= 0 && newValue <= 100) {
       setSliderValues(newValues);
@@ -141,30 +152,44 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
     }
   };
 
-  const handleBalancePress = (e) => {
-    if (['-', '+', 'e', 'E'].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
   return (
     <div className="dice-container">
       <div className="top">
         <div className="dice-content">
+              <ReactSlider
+                className="slider"
+                thumbClassName="indicating-arrow"
+                value={indicatingArrow}
+                min={0}
+                max={100}
+                disabled={true}
+              />
           {activeButton <= 2 ? (
             <>
               <ReactSlider
                 className="slider"
                 thumbClassName="slider-thumb"
                 trackClassName={ activeButton === 1 ? "slider-track-green" : "slider-track-red" }
-                value={sliderValue}
+                value={isNaN(sliderValue) ? 1 : sliderValue}
                 onChange={handleSliderChange}
-                min={0}
-                max={100}
+                min={1}
+                max={99}
+                disabled={gameInProgress===true}
               />
-              <p className="roll-label">{activeButton === 1 ? "Roll under: ":"Roll over: "}</p>
-              <div className="slider-values">
-                <input type="number" value={sliderValue} onKeyPress={handleCommaPress} onInput={handleSliderValue}></input>
+              <div>
+
+              </div>
+              <div className='dice-under-track'>
+                <div>
+                  <p className="roll-label">{activeButton === 1 ? "Roll under: ":"Roll over: "}</p>
+                  <div className="slider-values">
+                    <input type="number" value={sliderValue} onKeyPress={handleCommaPress} onBlur={handleSliderInvalid} onInput={handleSliderValue}></input>
+                  </div>
+                </div>
+                <div>
+                  <p className="dice-multiplier-label">Multiplier: </p>
+                  <div className={`dice-multiplier ${gameOver ? 'red' : 'green'}`}>x{(multiplier).toFixed(2)}</div>  
+                </div>
               </div>
             </>
           ) : (
@@ -179,11 +204,20 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
                 max={100}
                 step={1} 
                 allowCross={false} 
+                disabled={gameInProgress===true}
               />
-              <p className="roll-label">{activeButton === 3 ? "Roll between: ":"Roll outside: "}</p>
-              <div className="slider-values">
-                <input type="number" value={sliderValues[0]} onKeyPress={handleCommaPress} onInput={handleSliderValuesLeft}></input>
-                <input type="number" value={sliderValues[1]} onKeyPress={handleCommaPress} onInput={handleSliderValuesRight}></input>
+              <div className='dice-under-track'>
+                <div>
+                  <p className="roll-label">{activeButton === 3 ? "Roll between: ":"Roll outside: "}</p>
+                <div className="slider-values">
+                  <input type="number" value={sliderValues[0]} onKeyPress={handleCommaPress} onInput={handleSliderValuesLeft}></input>
+                  <input type="number" value={sliderValues[1]} onKeyPress={handleCommaPress} onInput={handleSliderValuesRight}></input>
+                </div> 
+                </div>
+                <div>
+                  <p className="dice-multiplier-label">Multiplier: </p>
+                  <div className={`dice-multiplier ${gameOver ? 'red' : 'green'}`}>x{(multiplier).toFixed(2)}</div>  
+                </div>
               </div>
             </>
           )}
