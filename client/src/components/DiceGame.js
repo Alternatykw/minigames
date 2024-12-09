@@ -28,20 +28,21 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   const [sliderValues, setSliderValues] = useState([25, 75]);
   const [previousValues, setPreviousValues] = useState([25, 75]);
   const [indicatingArrow, setIndicatingArrow] = useState(50);
+  const [changingInput, setChangingInput] = useState(false);
 
   useEffect(() => {
-    // change to onblur
-    setPreviousValues(sliderValues);
-    if((sliderValues[0]>=sliderValues[1]) && (sliderValues[1] === previousValues[1])){
-      setPreviousValues([sliderValues[1] - 1, sliderValues[1]]);
-      setSliderValues([sliderValues[1] - 1, sliderValues[1]]);
-    }else if((sliderValues[1]<=sliderValues[0]) && (sliderValues[0] === previousValues[0])){
-      setPreviousValues([sliderValues[0], sliderValues[0] + 1]);
-      setSliderValues([sliderValues[0], sliderValues[0] + 1]);
-    }else if(sliderValues[0]===0 && sliderValues[1]===100){
-      setSliderValues([1,100]);
+    if(!changingInput){
+      setPreviousValues(sliderValues);
+      if((sliderValues[0]>=sliderValues[1]) && (sliderValues[1] === previousValues[1])){
+        setPreviousValues([sliderValues[1] - 1, sliderValues[1]]);
+        setSliderValues([sliderValues[1] - 1, sliderValues[1]]);
+      }else if((sliderValues[1]<=sliderValues[0]) && (sliderValues[0] === previousValues[0])){
+        setPreviousValues([sliderValues[0], sliderValues[0] + 1]);
+        setSliderValues([sliderValues[0], sliderValues[0] + 1]);
+      }else if(sliderValues[0]===0 && sliderValues[1]===100){
+        setSliderValues([1,100]);
+      }
     }
-    //
     
     let formula;
     switch(activeButton){
@@ -63,7 +64,18 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
     }else{
       setMultiplier(100/(formula+(100/(100-formula))));
     }
-  }, [activeButton, sliderValue, sliderValues, previousValues]);
+  }, [activeButton, sliderValue, sliderValues, previousValues, setMultiplier]);
+
+  const handleWin = () => {
+    setGameWon(true);
+    setWonCredits(Math.round((parseFloat(gameValue*multiplier))*100)/100);
+    modifyBalance((Math.round((parseFloat(gameValue*multiplier))*100)/100), 'game');
+  }
+
+  const handleLose = () => {
+    setGameOver(true);
+    setLostCredits(gameValue);
+  }
 
   const startGame = () => {
     if (gameValue <= 0 || isNaN(gameValue)) {
@@ -73,12 +85,48 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       document.getElementById('credits-input').focus();
       setErrorMessage("Minimum bet is 100.")
     } else {
+      setGameOver(false);
+      setGameWon(false);
+      setWonCredits(0);
+      setLostCredits(0);
       modifyBalance(-gameValue, 'game');
       setGameInProgress(true);
+      let randomValue = Math.floor(Math.random() * 101)
+      setTimeout(() => {
+        setIndicatingArrow(randomValue);
+        setGameInProgress(false);
+        switch(activeButton){
+          default: 
+            if(randomValue<=sliderValue){
+              handleWin();
+            }else{
+              handleLose();
+            }
+            break;
+          case 2:
+            if(randomValue>=sliderValue){
+              handleWin();
+            }else{
+              handleLose();
+            }
+            break;
+          case 3: 
+            if(randomValue>=sliderValues[0] && randomValue<=sliderValues[1]){
+              handleWin();
+            }else{
+              handleLose();
+            }
+            break;
+          case 4: 
+            if(randomValue<=sliderValues[0] || randomValue>=sliderValues[1]){
+              handleWin();
+            }else{
+              handleLose();
+            }
+            break;
+        }
+      }, 500); 
     }
-    setTimeout(() => {
-      setIndicatingArrow(Math.floor(Math.random() * 101));
-    }, 500); 
   }
 
   const handleSliderInvalid = (e) => {
@@ -86,6 +134,29 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       setSliderValue(1);
     }
   };
+
+  const handleSliderInvalidLeft = (e) => {
+    if (e.target.value === "" || parseInt(e.target.value)<0 ) {
+      if(sliderValues[1]===100){
+        setSliderValues([1, sliderValues[1]]);
+      }else{
+        setSliderValues([0, sliderValues[1]]);
+      }
+    }
+    setChangingInput(false);
+  }
+
+  const handleSliderInvalidRight = (e) => {
+    if (e.target.value === "" || parseInt(e.target.value)<0 ) {
+      if(sliderValues[0]===0){
+        setSliderValues([sliderValues[0], 99]);
+      }else{
+        setSliderValues([sliderValues[0], 100]);
+      }
+    }
+    setChangingInput(false);
+  }
+
 
   const handleSliderChange = (value) => {
     setSliderValue(value);
@@ -109,6 +180,7 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   };
 
   const handleSliderValuesLeft = (e) => {
+    setChangingInput(true);
     let newValue = e.target.value;
 
     if (newValue !== "0") {
@@ -116,11 +188,17 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       e.target.value = newValue;
     }
 
-    if (newValue >= sliderValues[1]) {
-      newValue = sliderValues[1] - 1; 
-    }
+    let newValues;
 
-    const newValues = [parseInt(newValue), sliderValues[1]];
+    if(parseInt(e.target.value) >= sliderValues[1]){
+      if(parseInt(newValue)<100){
+        newValues = [parseInt(newValue), parseInt(newValue)+1];
+      }else{
+        newValues = [99, 100];
+      }
+    }else{
+      newValues = [parseInt(newValue), sliderValues[1]];
+    }
   
     if (!isNaN(newValue) && newValue >= 0 && newValue <= 100) {
       setSliderValues(newValues);
@@ -128,6 +206,7 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   };
 
   const handleSliderValuesRight = (e) => {
+    setChangingInput(true);
     let newValue = e.target.value;
 
     if (newValue !== "0") {
@@ -135,11 +214,17 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       e.target.value = newValue;
     }
 
-    if (newValue <= sliderValues[0]) {
-      newValue = sliderValues[0] + 1; 
-    }
+    let newValues;
 
-    const newValues = [sliderValues[0], parseInt(newValue)];
+    if(parseInt(newValue) <= sliderValues[0]){
+      if(parseInt(newValue)>0){
+        newValues = [parseInt(newValue)-1, parseInt(newValue)];
+      }else{
+        newValues = [0, 1];
+      }
+    }else{
+      newValues = [sliderValues[0], parseInt(newValue)];
+    }
   
     if (!isNaN(newValue) && newValue >= 0 && newValue <= 100) {
       setSliderValues(newValues);
@@ -198,7 +283,7 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
                 className="slider"
                 thumbClassName="slider-thumb"
                 trackClassName={ activeButton === 4 ? "slider-track-green" : "slider-track-red" }
-                value={sliderValues}
+                value={isNaN(sliderValues[0]) ? [1, sliderValues[1]] : isNaN(sliderValues[0]) ? [sliderValues[0], 100] : sliderValues}
                 onChange={handleSlider2Change}
                 min={0}
                 max={100}
@@ -210,8 +295,8 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
                 <div>
                   <p className="roll-label">{activeButton === 3 ? "Roll between: ":"Roll outside: "}</p>
                 <div className="slider-values">
-                  <input type="number" value={sliderValues[0]} onKeyPress={handleCommaPress} onInput={handleSliderValuesLeft}></input>
-                  <input type="number" value={sliderValues[1]} onKeyPress={handleCommaPress} onInput={handleSliderValuesRight}></input>
+                  <input type="number" value={sliderValues[0]} onKeyPress={handleCommaPress} onBlur={handleSliderInvalidLeft} onInput={handleSliderValuesLeft}></input>
+                  <input type="number" value={sliderValues[1]} onKeyPress={handleCommaPress} onBlur={handleSliderInvalidRight} onInput={handleSliderValuesRight}></input>
                 </div> 
                 </div>
                 <div>

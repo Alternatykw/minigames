@@ -116,7 +116,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	width: 5rem;
+	width: 6rem;
 	cursor: pointer;
 	position: absolute;
 	background-color: #333;
