@@ -1,0 +1,15 @@
+.account {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.account-container {
+    height: 20rem;
+    width: 20rem;
+    background-color: #333;
+    border: 2px solid #555;
+    text-align: left;
+    padding: 1rem 2rem;
+}

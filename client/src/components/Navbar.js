@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 import FlyoutMenu from './FlyoutMenu';
 import LoginForm from './LoginForm';
@@ -106,9 +107,11 @@ const Navbar = ({ isModalOpen, openModal, closeModal, isModalClosing, isLoggedIn
           {userDropdown && 
 
           <div>
-              <button className="user-button">
-                Account
-              </button>
+              <Link to="/account">
+                <button className="user-button">
+                  Account
+                </button>
+              </Link>
               <button className="user-button" onClick={handleLogout}>
                 Logout
               </button>

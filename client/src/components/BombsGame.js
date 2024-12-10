@@ -142,7 +142,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       updatedButtons[index].clicked = true;
       setButtons(updatedButtons);
       setClickedCount(clickedCount + 1);
-      setCurrentCashout(Math.round((gameValue * multiplier)*100)/100);
+      setCurrentCashout((parseFloat(gameValue*multiplier)).toFixed(2));
     }
   };
 
@@ -167,7 +167,7 @@ const BombsGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
         <h2>Choose Difficulty:</h2>
         <div className="rowButtons">
           <button className={`sidebutton${activeButton===1 ? '-active' : ''}`} onClick={() => {setClickedCount(0); setBombsAmount(3); setActiveButton(1);}} disabled={gameInProgress}>Easy</button>
-          <button className={`sidebutton${activeButton===2 ? '-active' : ''}`} onClick={() => {setClickedCount(0); setBombsAmount(5); setActiveButton(2);}} disabled={gameInProgress}>Medium</button>
+          <button className={`sidebutton${activeButton===2 ? '-active' : ''}`} onClick={() => {setClickedCount(0); setBombsAmount(8); setActiveButton(2);}} disabled={gameInProgress}>Medium</button>
           <button className={`sidebutton${activeButton===3 ? '-active' : ''}`} onClick={() => {setClickedCount(0); setBombsAmount(13); setActiveButton(3);}} disabled={gameInProgress}>Hard</button>
           <button className={`sidebutton${activeButton===4 ? '-active' : ''}`} onClick={() => {setClickedCount(0); setBombsAmount(24); setActiveButton(4);}} disabled={gameInProgress}>Crazy</button>
         </div>

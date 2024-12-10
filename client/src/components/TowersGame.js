@@ -185,7 +185,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
         setButtons(updatedButtons);
         setClickedRow(rowIndex);
         setClickedCount(clickedCount + 1);
-        setCurrentCashout(Math.round((gameValue * (multiplier ** (clickedCount + 1))) * 100) / 100);
+        setCurrentCashout((gameValue * (multiplier ** (clickedCount + 1))).toFixed(2));
       }
     }
   };

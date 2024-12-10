@@ -68,7 +68,7 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
 
   const handleWin = () => {
     setGameWon(true);
-    setWonCredits(Math.round((parseFloat(gameValue*multiplier))*100)/100);
+    setWonCredits((parseFloat(gameValue*multiplier)).toFixed(2));
     modifyBalance((Math.round((parseFloat(gameValue*multiplier))*100)/100), 'game');
   }
 
@@ -80,10 +80,10 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
   const startGame = () => {
     if (gameValue <= 0 || isNaN(gameValue)) {
       document.getElementById('credits-input').focus();
-      setErrorMessage("Choose credits amount.")
-    } else if (gameValue<100){
+      setErrorMessage("Choose credits amount.");
+    } else if (gameValue < 100) {
       document.getElementById('credits-input').focus();
-      setErrorMessage("Minimum bet is 100.")
+      setErrorMessage("Minimum bet is 100.");
     } else {
       setGameOver(false);
       setGameWon(false);
@@ -91,43 +91,62 @@ const DiceGame = ({ openModal, isLoggedIn, modifyBalance, user }) => {
       setLostCredits(0);
       modifyBalance(-gameValue, 'game');
       setGameInProgress(true);
-      let randomValue = Math.floor(Math.random() * 101)
-      setTimeout(() => {
-        setIndicatingArrow(randomValue);
-        setGameInProgress(false);
-        switch(activeButton){
-          default: 
-            if(randomValue<=sliderValue){
-              handleWin();
-            }else{
-              handleLose();
+  
+      const randomValue = Math.floor(Math.random() * 10001) / 100;
+  
+      const animationSteps = [
+        { value: 0 },  
+        { value: 100 },
+        { value: 0 },  
+        { value: 100 },
+        { value: randomValue },
+        { value: randomValue }
+      ];
+  
+      let totalDelay = 0;
+
+      animationSteps.forEach((step, index) => {
+        totalDelay += 500;
+        setTimeout(() => {
+          setIndicatingArrow(step.value);
+  
+          if (index === animationSteps.length - 1) {
+            setGameInProgress(false);
+            switch (activeButton) {
+              default:
+                if (randomValue <= sliderValue) {
+                  handleWin();
+                } else {
+                  handleLose();
+                }
+                break;
+              case 2:
+                if (randomValue >= sliderValue) {
+                  handleWin();
+                } else {
+                  handleLose();
+                }
+                break;
+              case 3:
+                if (randomValue >= sliderValues[0] && randomValue <= sliderValues[1]) {
+                  handleWin();
+                } else {
+                  handleLose();
+                }
+                break;
+              case 4:
+                if (randomValue <= sliderValues[0] || randomValue >= sliderValues[1]) {
+                  handleWin();
+                } else {
+                  handleLose();
+                }
+                break;
             }
-            break;
-          case 2:
-            if(randomValue>=sliderValue){
-              handleWin();
-            }else{
-              handleLose();
-            }
-            break;
-          case 3: 
-            if(randomValue>=sliderValues[0] && randomValue<=sliderValues[1]){
-              handleWin();
-            }else{
-              handleLose();
-            }
-            break;
-          case 4: 
-            if(randomValue<=sliderValues[0] || randomValue>=sliderValues[1]){
-              handleWin();
-            }else{
-              handleLose();
-            }
-            break;
-        }
-      }, 500); 
+          }
+        }, totalDelay);
+      });
     }
-  }
+  };
 
   const handleSliderInvalid = (e) => {
     if (e.target.value === "" || parseInt(e.target.value)<=0 ) {
