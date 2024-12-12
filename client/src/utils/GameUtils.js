@@ -30,9 +30,9 @@ export const useGameUtils = () => {
                 e.target.value=parseFloat(balance);
                 setGameValue(parseFloat(balance));
             }
-            if (e.target.value > 10000) {
-                e.target.value=10000;
-                setGameValue(10000);
+            if (e.target.value > 100000) {
+                e.target.value=100000;
+                setGameValue(100000);
             }
             if (e.target.value < 0){
                 e.target.value=0;

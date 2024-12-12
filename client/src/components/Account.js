@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import './Account.css';
 
 const Account = ({ user }) => {
-  const [email, setEmail] = useState(false);
-
   const formatEmail = (email) => {
     const atIndex = email.indexOf('@');
     const localPart = email.substring(0, atIndex);
@@ -21,8 +19,10 @@ const Account = ({ user }) => {
         <div className="account-container">
             <p className="credentials">Username: {user.username}</p>
             <p className="credentials">Email: {formatEmail(user.email)}</p>
-            <p className="credentials"><button>Change Password</button></p>
-            <p className="delete-account"><button>Delete Account</button></p>
+            <div className="row">
+              <p className="credentials"><button className="change-password">Change Password</button></p>
+              <p className="credentials"><button className="delete-account">Delete Account</button></p>
+            </div>
         </div>
     </div>
   );

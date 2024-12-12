@@ -10,6 +10,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import AccountPage from './sites/AccountPage';
 import { useUserData } from './utils/UserUtils';
+import Roulette from './sites/Roulette';
 
 const root = createRoot(document.getElementById('root'));
 
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/towers" element={<Towers />} />
         <Route path="/dice" element={<Dice />} />
         <Route path="/account" element={isLoggedIn ? <AccountPage /> : <LandingPage />} />
+        <Route path="/roulette" element={<Roulette />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

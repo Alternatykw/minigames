@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './FlyoutMenu.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBomb, faHouse, faUpLong, faDice } from "@fortawesome/free-solid-svg-icons";
+import { faBomb, faHouse, faUpLong, faDice, faAward, faRecordVinyl } from "@fortawesome/free-solid-svg-icons";
 
 
 const FlyoutMenu = ({ isOpen, onClose }) => {
@@ -51,9 +51,14 @@ const FlyoutMenu = ({ isOpen, onClose }) => {
               <FontAwesomeIcon icon={faDice} fixedWidth/> Dice
             </Link>
           </li>
-          <li className={isCurrent('something') ? 'darker' : ''}>
-            <Link to="/something">
-              Something something
+          <li className={isCurrent('roulette') ? 'darker' : ''}>
+            <Link to="/roulette">
+              <FontAwesomeIcon icon={faRecordVinyl} fixedWidth/> Roulette
+            </Link>
+          </li>
+          <li className={isCurrent('leaderboard') ? 'darker' : ''}>
+            <Link to="/leaderboard">
+              <FontAwesomeIcon icon={faAward} fixedWidth/> Leaderboard
             </Link>
           </li>
         </ul>

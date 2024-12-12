@@ -1,0 +1,96 @@
+.roulette-content {
+    background-color: #333;
+    border: 2px solid #555;
+    font-size: 18px;
+    text-align: center;
+    justify-content: flex-start;
+    padding: 1rem 2rem;
+    width: 850px;
+    height: 600px;
+}
+
+.roulette-indicator {
+    position: absolute;
+    width: 3px;
+    background-color: #ccc;
+    height: 8rem;
+    margin-top: -1rem;
+}
+
+.roulette-progress-bar {
+    background-color: #39ca3e;
+    margin-bottom: 2rem;
+    height: 6px;
+    transition: width 1s ease-in-out;
+}
+
+.roulette-progress-div {
+    width: 100%;
+    background-color: rgb(128, 128, 128);
+    height: 6px;
+    margin-bottom: 2rem;
+}
+
+
+.roulette-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    gap: 4px;
+}
+
+.roulette-number {
+    width: 2rem;
+    height: 2rem;
+    padding: 2rem;
+    text-align: center;
+    line-height: 30px;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+.previous-roulette-number {
+    font-size: 15px;
+    width: 1rem;
+    height: 1rem;
+    padding: 1rem;
+    text-align: center;
+    line-height: 15px;
+    font-weight: 500;
+    border-radius: 100%;
+}
+
+.roulette-green, .roulette-red, .roulette-black {
+    color: white;
+    padding: 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.roulette-green {
+    background-color: green;
+}
+
+.roulette-red {
+    background-color: rgb(209, 41, 41);
+}
+
+.roulette-black {
+    background-color: rgb(30, 30, 30);
+}
+
+.roulette-bet-columns {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+}
+
+.roulette-content input {
+    margin-bottom: 1rem;
+    text-align: center;
+    padding: 10px;
+}

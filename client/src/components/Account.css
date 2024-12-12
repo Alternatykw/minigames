@@ -6,10 +6,40 @@
 }
 
 .account-container {
-    height: 20rem;
-    width: 20rem;
     background-color: #333;
     border: 2px solid #555;
-    text-align: left;
+    font-size: 18px;
+    text-align: center;
     padding: 1rem 2rem;
+}
+
+.change-password, .delete-account {
+    padding: 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 15px;
+    background-color: transparent;
+}
+
+.change-password {
+    color: rgb(99, 99, 184);
+    border: 1px solid rgb(99, 99, 184);
+    margin-right: 1rem;
+}
+
+.delete-account {
+    color: rgb(220, 20, 20); 
+    border: 1px solid rgb(220, 20, 20); 
+}
+
+.change-password:hover {
+    color: rgb(129, 129, 214);
+    border-color: rgb(129, 129, 214);
+    cursor: pointer;
+}
+
+.delete-account:hover {
+    color: rgb(250, 50, 50); 
+    border-color: rgb(250, 50, 50); 
+    cursor: pointer;
 }
