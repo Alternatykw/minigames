@@ -7,6 +7,7 @@
 	margin-bottom: 2rem;
 }
 .game-link, .middle-game-link {
+	position: relative;
 	align-items: center;
 	border: 2px solid #555;
 	border-radius: 5px;
@@ -15,6 +16,7 @@
 	justify-content: center;
 	text-align: center;
 	transition: transform 0.66s;
+	z-index: 1;
 }
 .middle-game-link:hover, .game-link:hover {
 	cursor: pointer;
@@ -69,7 +71,6 @@
 	height: 3rem;
 	transition: background-color 0.4s, transform 0.4s;
 	width: 12rem;
-	margin-left: 0.75rem;
 }
 .play-button button:hover {
 	background-color: rgb(0, 130, 0);
@@ -85,11 +86,18 @@ a {
 .arrow::selection {
 	background-color: transparent;
 }
-.invisible{
+.invisible-left{
 	visibility: hidden;
 	position: absolute;
 	margin-left: 17.5rem;
 	transform: scale(0.5);
+}
+.invisible-right{
+	visibility: hidden;
+	position: absolute;
+	transform: scale(0.5);
+	margin-left: -31.25rem;
+	z-index: 0;
 }
 @keyframes moveRight {
     from {

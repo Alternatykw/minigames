@@ -7,16 +7,17 @@
 	justify-content: space-between;
 	left: 0;
 	padding: 1rem;
-	position: fixed;
+	position: absolute;
 	top: 0;
-	width: 100%;
+	width: 98.3%;
 	z-index: 100;
+	min-width: 1024px;
 }
 .navbar-left {
 	margin-left: 2rem;
 }
 .navbar-right {
-	margin-right: 2rem;
+	margin-right: 1.5rem;
 	min-width: 7rem;
 	min-height: 3.5rem;
 }
@@ -80,9 +81,6 @@
 	color: white;
 	cursor: pointer;
 	font-size: 15px;
-}
-.login-button{
-	margin-right: 20px;
 }
 .toggle-button:hover,
 .login-button:hover {

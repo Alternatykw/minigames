@@ -24,6 +24,7 @@ const RouletteGame = ({ user, setUser, isLoggedIn, openModal }) => {
     const [timer, setTimer] = useState();
     const [barValue, setBarValue] = useState();
     const [checkingWinnings, setCheckingWinnings] = useState(false);
+    const [placingBet, setPlacingBet] = useState(false);
     const playerName = user.username;
 
     useEffect(() => {
@@ -51,10 +52,25 @@ const RouletteGame = ({ user, setUser, isLoggedIn, openModal }) => {
         fetchRouletteInfo();
 
         socket.on('betPlaced', (data) => {
-            setBetAmounts((prev) => ({
-                ...prev,
-                [data.color]: [...prev[data.color], { name: data.name, amount: data.amount }],
-            }));
+            setBetAmounts((prev) => {
+                const updatedColorBets = [...prev[data.color]];
+        
+                const existingBetIndex = updatedColorBets.findIndex((bet) => bet.name === data.name);
+        
+                if (existingBetIndex !== -1) {
+                    updatedColorBets[existingBetIndex] = {
+                        ...updatedColorBets[existingBetIndex],
+                        amount: parseFloat(updatedColorBets[existingBetIndex].amount) + parseFloat(data.amount),
+                    };
+                } else {
+                    updatedColorBets.push({ name: data.name, amount: parseFloat(data.amount) });
+                }
+        
+                return {
+                    ...prev,
+                    [data.color]: updatedColorBets,
+                };
+            });
         });
 
         socket.on('spinResult', (data) => {
@@ -81,26 +97,32 @@ const RouletteGame = ({ user, setUser, isLoggedIn, openModal }) => {
             socket.off('betPlaced');
             socket.off('spinResult');
             socket.off('rouletteArray');
+            socket.off('previousArray');
             clearInterval(timerInterval);
         };
     }, []);
 
     const handleBet = (color) => {
-        if (!isLoggedIn){
-            openModal();
-            return;
-        }
-
         if (!betAmount || isNaN(betAmount) || betAmount <= 0) {
-            alert('Please enter a valid name and bet amount.');
+            setErrorMessage('Enter a bet value.')
             return;
         }
 
+        if (!betAmount || isNaN(betAmount) || betAmount < 100) {
+            setErrorMessage('Minimum bet is 100.');
+            return;
+        }
+
+        setPlacingBet(true);
+        
         socket.emit('placeBet', { color, name: playerName, amount: betAmount });
         setUser(prevUser => ({
             ...prevUser,
             balance: prevUser.balance - betAmount 
         }));
+        setTimeout(() => {
+            setPlacingBet(false);
+        }, 300);
     };
 
     useEffect(() => {
@@ -141,17 +163,19 @@ const RouletteGame = ({ user, setUser, isLoggedIn, openModal }) => {
     return (
         <div className="roulette-content">
             <div className="roulette-row">
-                {rouletteArray.map((number, index) => (
-                    <div
-                        key={index}
-                        className="roulette-number"
-                        style={{
-                            backgroundColor: number === 0 ? 'green' : number % 2 === 0 ? 'rgb(209, 41, 41)' : 'rgb(30, 30, 30)',
-                        }}
-                    >
-                        {number}
-                    </div>
-                ))}
+                <div className="roulette-numbers">
+                    {rouletteArray.map((number, index) => (
+                        <div
+                            key={index}
+                            className="roulette-number"
+                            style={{
+                                backgroundColor: number === 0 ? 'green' : number % 2 === 0 ? 'rgb(209, 41, 41)' : 'rgb(30, 30, 30)',
+                            }}
+                        >
+                            {number}
+                        </div>
+                    ))}
+                </div>
                 <div className="roulette-indicator"></div>
             </div>
             <div className="roulette-row">
@@ -172,39 +196,40 @@ const RouletteGame = ({ user, setUser, isLoggedIn, openModal }) => {
             </div>
             <p>Next spin in: {timer} seconds</p>
             <p><input type="number" placeholder="Bet Amount" id="credits-input" value={betAmount} onKeyPress={handleBalancePress} onChange={(e) => {handleInputChange(e); setBetAmount(e.target.value);}}></input></p>
+            {errorMessage==="" ? "" : <div className="bet-error">{errorMessage}</div>}
 
             <div className="roulette-bet-columns">
                 <div>
-                    <button className="roulette-red"
-                        onClick={() => handleBet('red')}
+                    <button className="roulette-red" disabled={timer > 35 || placingBet === true}
+                        onClick={isLoggedIn ? () => handleBet('red') : openModal}
                     >
                         Bet on Red
                     </button>
-                    <div>
+                    <div className="bet-list">
                         {betAmounts.red.map((bet, index) => (
                             <p key={index}>{`${bet.name}: ${bet.amount}`}</p>
                         ))}
                     </div>
                 </div>
                 <div>
-                    <button className="roulette-green"
-                        onClick={() => handleBet('green')}
+                    <button className="roulette-green" disabled={timer > 35 || placingBet === true}
+                        onClick={isLoggedIn ? () => handleBet('green') : openModal}
                     >
                         Bet on Green
                     </button>
-                    <div>
+                    <div className="bet-list">
                         {betAmounts.green.map((bet, index) => (
                             <p key={index}>{`${bet.name}: ${bet.amount}`}</p>
                         ))}
                     </div>
                 </div>
                 <div>
-                    <button className="roulette-black"
-                        onClick={() => handleBet('black')}
+                    <button className="roulette-black" disabled={timer > 35 || placingBet === true}
+                        onClick={isLoggedIn ? () => handleBet('black') : openModal}
                     >
                         Bet on Black
                     </button>
-                    <div>
+                    <div className="bet-list">
                         {betAmounts.black.map((bet, index) => (
                             <p key={index}>{`${bet.name}:${bet.amount}`}</p>
                         ))}

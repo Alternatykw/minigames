@@ -127,7 +127,13 @@ io.on('connection', (socket) => {
         user.profit -= data.amount; 
         await user.save();
 
-        allBets[data.color].push(data);
+        const existingBetIndex = allBets[data.color].findIndex(bet => bet.name === data.name);
+            if (existingBetIndex !== -1) {
+              allBets[data.color][existingBetIndex].amount = 
+              parseFloat(allBets[data.color][existingBetIndex].amount) + parseFloat(data.amount);
+            } else {
+                allBets[data.color].push(data);
+            }
         io.emit('betPlaced', data);
     });
 });
@@ -244,6 +250,28 @@ app.put('/user/modifybalance', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 
+});
+
+// Route for fetching profit leaderboards
+app.get('/profits', async (req, res) => {
+  try {
+    const topUsers = await User.find()
+      .sort({ profit: -1 }) 
+      .limit(10) 
+      .select('username profit -_id'); 
+
+    const bottomUsers = await User.find()
+      .sort({ profit: 1 }) 
+      .limit(10) 
+      .select('username profit -_id'); 
+
+    res.status(200).json({ 
+      topUsers, 
+      bottomUsers 
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching the data' });
+  }
 });
 
 server.listen(PORT, () => {

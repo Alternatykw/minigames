@@ -11,6 +11,7 @@ import reportWebVitals from './reportWebVitals';
 import AccountPage from './sites/AccountPage';
 import { useUserData } from './utils/UserUtils';
 import Roulette from './sites/Roulette';
+import LeaderboardPage from './sites/LeaderboardPage';
 
 const root = createRoot(document.getElementById('root'));
 
@@ -37,6 +38,7 @@ const App = () => {
         <Route path="/dice" element={<Dice />} />
         <Route path="/account" element={isLoggedIn ? <AccountPage /> : <LandingPage />} />
         <Route path="/roulette" element={<Roulette />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
