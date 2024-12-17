@@ -69,9 +69,6 @@
 .navbar a {
 	text-decoration: none;
 }
-.navbar a:hover {
-	text-decoration: underline;
-}
 .toggle-button,
 .login-button {
 	background-color: #333;
