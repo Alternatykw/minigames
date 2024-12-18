@@ -8,7 +8,9 @@ export const useUserData = () => {
     email: '',
     balance: 0,
     profit: 0,
-    permissions: ''
+    permissions: '',
+    active: false,
+    code: ''
   });
 
   const handleLogout = () => {
@@ -18,7 +20,9 @@ export const useUserData = () => {
       email: '',
       balance: 0,
       profit: 0,
-      permissions: ''
+      permissions: '',
+      active: false,
+      code: ''
     });
     setIsLoggedIn(false);
     window.location.reload(false);
@@ -34,13 +38,15 @@ export const useUserData = () => {
         }
       })
       .then(response => {
-        const { username, email, balance, profit, permissions } = response.data;
+        const { username, email, balance, profit, permissions, active, code } = response.data;
         setUser({
           username,
           email,
           balance: parseFloat(balance.$numberDecimal), 
           profit: parseFloat(profit.$numberDecimal),   
-          permissions
+          permissions,
+          active,
+          code
         });
       })
       .catch(error => {
@@ -55,7 +61,9 @@ export const useUserData = () => {
             email: '',
             balance: 0,
             profit: 0,
-            permissions: ''
+            permissions: '',
+            active: false,
+            code: ''
           });
           setIsLoggedIn(false);
         }

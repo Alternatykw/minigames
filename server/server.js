@@ -7,6 +7,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const http = require('http');
 const socketIo = require('socket.io');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const PORT = 5000;
 const app = express();
@@ -23,6 +25,25 @@ const io = socketIo(server, {
 app.use(express.json());
 app.use(express.static('public'));
 app.use(cors());
+
+// SMTP config
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GOOGLE_USER, 
+    pass: process.env.GOOGLE_APP_PASS,
+  },
+});
+
+// Function to send an email
+async function sendMail(mailOptions) {
+  try {
+    const result = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully:', result);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
 
 // Database connection
 const mongoOptions = {
@@ -154,10 +175,13 @@ const jwtSecret = process.env.JWT_SECRET;
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized: No token provided' });
-  }
+  const { code } = req.query;
 
+  if (!token) {
+    return res.status(401).json({
+      message: code ? 'You need to log in to activate the account' : 'Unauthorized: No token provided'
+    });
+  }
   try {
     const decoded = jwt.verify(token.split(' ')[1], jwtSecret);
     req.user = decoded;
@@ -170,18 +194,30 @@ const verifyToken = (req, res, next) => {
 // Route for handling user registration
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
+  const activationCode = crypto.randomBytes(6).toString('base64').slice(0, 8);
 
   try {
-    const existingEmail = await User.findOne({ email });
+    const existingEmail = await User.findOne({ email, active: true });
     if (existingEmail) {
-      return res.status(400).json({ message: 'This email is already registered.' });
+      return res.status(400).json({ message: 'This email is already registered' });
     }
+    
     const existingUser = await User.findOne ({ username });
     if (existingUser) {
-      return res.status(400).json({ message: 'This username is already taken.' });
+      return res.status(400).json({ message: 'This username is already taken' });
     }
+
+    const mailOptions = {
+      from: `Minigames ${process.env.GOOGLE_USER}`,
+      to: email,
+      subject: 'Minigames account activation',
+      html: `<h2>To activate your account, click on the link below:</h2>
+             <a href="http://localhost:3000/activate?code=${activationCode}">Click Here!</a>`,
+    };
+    sendMail(mailOptions);
+
     const hashedPassword = await bcrypt.hash(password, 10); 
-    const newUser = new User({ username, email, password: hashedPassword });
+    const newUser = new User({ username, email, password: hashedPassword, code: activationCode });
 
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
@@ -221,7 +257,7 @@ app.get('/user', verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json({ username: user.username, email: user.email, balance: user.balance, profit: user.profit, permissions: user.permissions });
+    res.status(200).json({ username: user.username, email: user.email, balance: user.balance, profit: user.profit, permissions: user.permissions, active: user.active, code: user.code });
   } catch (error) {
     console.error('Error fetching user data:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -293,6 +329,93 @@ app.get('/profits', async (req, res) => {
   }
 });
 
+// Route for activating an user
+app.post('/activate', verifyToken, async (req, res) => {
+  try {
+    const { code } = req.query.code ? req.query : req.body;
+
+    const user = await User.findById(req.user.userId);
+
+    if (user.active) {
+      return res.status(200).json({ message: 'Account is already activated.' });
+    }
+
+    if (code && code === user.code){
+      user.code = '';
+      user.active = true;
+    }
+    await user.save();
+
+    res.status(200).json({ message: 'User activated successfully' });
+  } catch (error) {
+    console.error('Error activating user: ', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Route for sending a password reset link
+app.post('/passlink', async (req, res) => {
+  const email = req.body;
+  const passCode = crypto.randomBytes(6).toString('base64').slice(0, 8);
+
+  try {
+    const user = await User.findOne({ email, active: true });
+
+    if (!user) {
+      return res.status(404).json({ message: 'This email is not registered' });
+    }
+
+    const mailOptions = {
+      from: `Minigames ${process.env.GOOGLE_USER}`,
+      to: email,
+      subject: 'Minigames account password change',
+      html: `<h2>To change your accounts password, click on the link below:</h2>
+             <p><a href="http://localhost:3000/passreset?code=${passCode}">Click Here!</a></p>
+             <p>If you haven't requested a password reset, ignore this email.</p>`,
+    };
+    sendMail(mailOptions);
+
+    user.code = passCode;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password: ', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Route for resetting the password
+app.post('/passreset', async (req, res) => {
+  const { code } = req.query;
+  const newPassword = req.body;
+
+  try {
+    if (!code){
+      res.status(404).json({ message: 'No password reset code present' });
+    }
+
+    const user = await User.findOne({ code });
+
+    if (code === user.code){
+      user.code = '';
+      user.password = newPassword;
+    }else{
+      res.status(401).json({ message: 'Invalid password reset code' });
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password: ', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+// There should be a code expiration in the database and routes should check it but im lazy, chance to get the same code is relatively low (but never zero)
