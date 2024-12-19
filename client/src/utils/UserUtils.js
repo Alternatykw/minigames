@@ -103,5 +103,5 @@ export const useUserData = () => {
     }
   }
 
-  return { handleLogout, isLoggedIn, user, modifyBalance, setUser };
+  return { handleLogout, isLoggedIn, setIsLoggedIn, user, modifyBalance, setUser };
 };

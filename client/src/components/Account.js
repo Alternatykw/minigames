@@ -22,6 +22,9 @@ const Account = ({ user }) => {
     if (localPart.length > 6) {
       const maskedLocalPart = `${localPart.slice(0, 4)}****${localPart.slice(-2)}`;
       return maskedLocalPart + domainPart;
+    }else {
+      const maskedLocalPart = `${localPart.slice(0, 1)}****${localPart.slice(-1)}`;
+      return maskedLocalPart + domainPart;
     }
     return email;  
   };

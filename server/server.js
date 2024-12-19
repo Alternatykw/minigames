@@ -274,7 +274,7 @@ app.delete('/user', verifyToken, async (req, res) => {
     }
 
     res.status(200).json({
-      message: 'User deleted successfully'
+      message: 'Account sucessfully removed'
     });
 
   } catch (error) {
@@ -353,6 +353,27 @@ app.post('/activate', verifyToken, async (req, res) => {
   }
 });
 
+// Route to check user password
+app.post('/check-password', verifyToken, async (req, res) => {
+  try {
+    const { password } = req.body;
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (match) {
+        return res.status(200).json({ message: 'Password is correct' });
+    } else {
+        return res.status(401).json({ error: 'Incorrect password' });
+    }
+  } catch (error) {
+    console.error('Error checking password: ', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Route for sending a password reset link
 app.post('/passlink', async (req, res) => {
   const email = req.body;
@@ -404,6 +425,22 @@ app.post('/passreset', async (req, res) => {
       res.status(401).json({ message: 'Invalid password reset code' });
     }
 
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password: ', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Route for changing password
+app.post('/passreset', verifyToken, async (req, res) => {
+  const newPassword = req.body;
+  try {
+    const user = await User.findById(req.user.userId);
+    
+    user.password = newPassword;
     await user.save();
 
     res.status(200).json({ message: 'Password changed successfully' });
