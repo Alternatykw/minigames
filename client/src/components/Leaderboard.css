@@ -1,5 +1,85 @@
+.leaderboard-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .leaderboard-bot {
     display: flex;
     flex-direction: row;
-    gap: 4rem;
+    justify-content: center;
+    gap: 6rem;
 }
+
+.leaderboard-bot table {
+    border-spacing: 4rem 0.5rem;
+}
+
+.leaderboard-bot th {
+    font-size: 26px;
+    padding-bottom: 0.5rem;
+}
+
+.leaderboard-bot td {
+    font-size: 18px;
+}
+
+.leaderboard-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 5rem;
+    margin-bottom: 7rem;
+}
+
+.leaderboard-top img{
+    width: 250px;
+}
+
+#place3 {
+    margin-right: -2rem;
+}
+
+#place1 h2 {
+    margin-top: -1rem;
+}
+
+#place2, #place3 {
+    margin-top: 2rem;
+}
+
+#place1, #place2, #place3 {
+    width: 400px;
+}
+
+@media (max-width: 1366px) {
+    .leaderboard-top, .leaderboard-bot {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .leaderboard-top {
+        gap: 2rem;
+    }
+
+    #place1, #place2, #place3 {
+        margin: 0;
+    }
+
+    .leaderboard-bot {
+        gap: 10rem;
+    }
+
+      #place1 {
+        order: 1; /* Moves place1 (first place) to the second position */
+      }
+    
+      #place2 {
+        order: 2; /* Moves place2 (second place) to the first position */
+      }
+    
+      #place3 {
+        order: 3; /* Keeps place3 (third place) in the third position */
+      }
+  }

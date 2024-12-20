@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Leaderboard.css';
+import trophy1 from "../images/trophy1.svg";
+import trophy2 from "../images/trophy2.svg";
+import trophy3 from "../images/trophy3.svg";
 
 const Leaderboard = ({ user, isLoggedIn }) => {
   const [topUsers, setTopUsers] = useState([]);
   const [bottomUsers, setBottomUsers] = useState([]);
-  const PLACEHOLDER = { username: '-', profit: '-' };
 
   useEffect(() => {
+    const PLACEHOLDER = { username: '-', profit: '-' };
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:5000/profits');
@@ -60,13 +63,25 @@ const Leaderboard = ({ user, isLoggedIn }) => {
   return (
     <div className="leaderboard-content">
         <div className="leaderboard-top">
-            <div id='2'></div>
-            <div id='1'></div>
-            <div id='3'></div>
+            <div id='place2'>
+              <img src={trophy2} alt="second place" />
+              <h2>#2 {topUsers[1]?.username || 'Loading...'}</h2>
+              <h3>Profit: {topUsers[1]?.profit || 'Loading...'}</h3>
+            </div>
+            <div id='place1'>
+              <img src={trophy1} alt="first place" />
+              <h1>#1 {topUsers[0]?.username || 'Loading...'}</h1>
+              <h2>Profit: {topUsers[0]?.profit || 'Loading...'}</h2>
+            </div>
+            <div id='place3'>
+              <img src={trophy3} alt="third place" />
+              <h2>#3 {topUsers[2]?.username || 'Loading...'}</h2>
+              <h3>Profit: {topUsers[2]?.profit || 'Loading...'}</h3>
+            </div>
         </div>
         <div className="leaderboard-bot">
             <div className='hof'>
-                <h2>Hall of Fame</h2>
+                <h1>Hall of Fame</h1>
                 <table>
                     <thead>
                         <tr>
@@ -78,7 +93,7 @@ const Leaderboard = ({ user, isLoggedIn }) => {
                     <tbody>
                         {topUsers.map((user, index) => (
                             <tr key={index} className={index === 0 ? 'top1' : 'leaderboard-tr'}>
-                                <td>{index+1}</td>
+                                <td>#{index+1}</td>
                                 <td>{user.username}</td>
                                 <td>{formatProfit(user.profit)}</td>
                             </tr>
@@ -87,7 +102,7 @@ const Leaderboard = ({ user, isLoggedIn }) => {
                 </table>
             </div>
             <div className='hos'>
-                <h2>Hall of Shame</h2>
+                <h1>Hall of Shame</h1>
                 <table>
                     <thead>
                         <tr>
@@ -99,7 +114,7 @@ const Leaderboard = ({ user, isLoggedIn }) => {
                     <tbody>
                         {bottomUsers.map((user, index) => (
                             <tr key={index} className={index === 0 ? 'top1' : 'leaderboard-tr'}>
-                                <td>{index+1}</td>
+                                <td>#{index+1}</td>
                                 <td>{user.username}</td>
                                 <td>{formatProfit(user.profit)}</td>
                             </tr>
