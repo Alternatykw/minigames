@@ -192,7 +192,7 @@ const TowersGame = ({ openModal, isLoggedIn, modifyBalance, user}) => {
 
   return (
     <div className="container">
-      <div className='sidebar'>
+      <div className={`${towers['sidebar']}`}>
         <h2>Choose Difficulty:</h2>
         <div className="rowButtons">
           <button className={`sidebutton${activeButton === 1 ? '-active' : ''}`} onClick={() => { handleDifficulty(1) }} disabled={gameInProgress}>Easy</button>

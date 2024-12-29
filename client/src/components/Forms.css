@@ -81,7 +81,20 @@
 	animation: spin 0.6s linear infinite;
 	display: inline-block;
 	margin-right: 8px;
-  }
+}
+.forgot-p {
+	position: absolute;
+	right: 40px;
+	top: 67px;
+	font-weight: 500;
+}
+.forgot-p a{
+	color: darkorange;
+}
+
+.forgot-p a:hover{
+	color: orange;
+}
   
 @keyframes spin {
 	0% {

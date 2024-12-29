@@ -12,11 +12,14 @@ import AccountPage from './sites/AccountPage';
 import { useUserData } from './utils/UserUtils';
 import Roulette from './sites/Roulette';
 import LeaderboardPage from './sites/LeaderboardPage';
+import ForgotPage from './sites/ForgotPage';
+import Activate from './sites/Activate';
+import PassReset from './sites/PassReset';
 
 const root = createRoot(document.getElementById('root'));
 
 const App = () => {
-  const { isLoggedIn } = useUserData();
+  const { isLoggedIn, user } = useUserData();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -31,16 +34,25 @@ const App = () => {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/bombs" element={<Bombs />} />
-        <Route path="/towers" element={<Towers />} />
-        <Route path="/dice" element={<Dice />} />
-        <Route path="/account" element={isLoggedIn ? <AccountPage /> : <LandingPage />} />
-        <Route path="/roulette" element={<Roulette />} />
-        <Route path="/leaderboard" element={<LeaderboardPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      {(user.active || !user.username) ? (
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/bombs" element={<Bombs />} />
+          <Route path="/towers" element={<Towers />} />
+          <Route path="/dice" element={<Dice />} />
+          <Route path="/account" element={isLoggedIn ? <AccountPage /> : <LandingPage />} />
+          <Route path="/roulette" element={<Roulette />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/forgot" element={<ForgotPage />} />
+          <Route path="/passreset" element={<PassReset />} />
+          <Route path="/activate" element={<Activate />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      ) : (
+        <Routes>
+          <Route path="*" element={<Activate />} />
+        </Routes>
+      )}
     </Router>
   );
 };

@@ -43,3 +43,11 @@
     border-color: rgb(250, 50, 50); 
     cursor: pointer;
 }
+
+.positive-profit {
+    color: green;
+}
+  
+  .negative-profit {
+    color: red;
+}

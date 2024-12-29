@@ -39,7 +39,7 @@ const transporter = nodemailer.createTransport({
 async function sendMail(mailOptions) {
   try {
     const result = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', result);
+    console.log('Email sent successfully.');
   } catch (error) {
     console.error('Error sending email:', error);
   }
@@ -212,7 +212,8 @@ app.post('/register', async (req, res) => {
       to: email,
       subject: 'Minigames account activation',
       html: `<h2>To activate your account, click on the link below:</h2>
-             <a href="http://localhost:3000/activate?code=${activationCode}">Click Here!</a>`,
+             <a href="http://localhost:3000/activate?code=${activationCode}">Click Here!</a>
+             <p>If the link doesn't work, just paste this code instead: ${activationCode}<p>`,
     };
     sendMail(mailOptions);
 
@@ -223,6 +224,35 @@ app.post('/register', async (req, res) => {
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Error registering user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Route for sending email again
+app.post('/sendagain', verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const activationCode = user.code;
+
+    const mailOptions = {
+      from: `Minigames ${process.env.GOOGLE_USER}`,
+      to: user.email,
+      subject: 'Minigames account activation',
+      html: `<h2>To activate your account, click on the link below:</h2>
+             <a href="http://localhost:3000/activate?code=${activationCode}">Click Here!</a>
+             <p>If the link doesn't work, just paste this code instead: ${activationCode}<p>`,
+    };
+    sendMail(mailOptions);
+
+    res.status(200).json({
+      message: 'Code sent again'
+    });
+    
+  } catch (error) {
+    console.error('Error sending email:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -332,21 +362,24 @@ app.get('/profits', async (req, res) => {
 // Route for activating an user
 app.post('/activate', verifyToken, async (req, res) => {
   try {
-    const { code } = req.query.code ? req.query : req.body;
+    const { code } = req.body;
 
     const user = await User.findById(req.user.userId);
 
     if (user.active) {
-      return res.status(200).json({ message: 'Account is already activated.' });
+      return res.status(201).json({ message: 'Account is already activated.' });
     }
 
+    console.log(code);
     if (code && code === user.code){
       user.code = '';
       user.active = true;
-    }
-    await user.save();
 
-    res.status(200).json({ message: 'User activated successfully' });
+      await user.save();
+      return res.status(200).json({ message: 'User activated successfully' });
+    }
+
+    res.status(401).json({ message: "Code doesn't match" });
   } catch (error) {
     console.error('Error activating user: ', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -376,7 +409,7 @@ app.post('/check-password', verifyToken, async (req, res) => {
 
 // Route for sending a password reset link
 app.post('/passlink', async (req, res) => {
-  const email = req.body;
+  const { email } = req.body;
   const passCode = crypto.randomBytes(6).toString('base64').slice(0, 8);
 
   try {
@@ -390,8 +423,9 @@ app.post('/passlink', async (req, res) => {
       from: `Minigames ${process.env.GOOGLE_USER}`,
       to: email,
       subject: 'Minigames account password change',
-      html: `<h2>To change your accounts password, click on the link below:</h2>
-             <p><a href="http://localhost:3000/passreset?code=${passCode}">Click Here!</a></p>
+      html: `<h2>To change your account's password, click on the link below:</h2>
+             <p><a href="http://localhost:3000/passreset?code=${passCode}"> >>> Click Here! <<< </a></p>
+             <p>If the link doesn't work, just paste this code instead: ${passCode}<p>
              <p>If you haven't requested a password reset, ignore this email.</p>`,
     };
     sendMail(mailOptions);
@@ -399,35 +433,31 @@ app.post('/passlink', async (req, res) => {
     user.code = passCode;
     await user.save();
 
-    res.status(200).json({ message: 'Password changed successfully' });
+    res.status(200).json({ message: 'Password link sent successfully' });
   } catch (error) {
     console.error('Error changing password: ', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// Route for resetting the password
-app.post('/passreset', async (req, res) => {
-  const { code } = req.query;
-  const newPassword = req.body;
+// Route for checking the password reset code
+app.post('/passcode', async (req, res) => {
+  const { code } = req.body;
 
   try {
     if (!code){
-      res.status(404).json({ message: 'No password reset code present' });
+      return res.status(404).json({ message: 'No password reset code present' });
     }
 
     const user = await User.findOne({ code });
 
-    if (code === user.code){
-      user.code = '';
-      user.password = newPassword;
-    }else{
-      res.status(401).json({ message: 'Invalid password reset code' });
+    if (code !== user.code){
+      return res.status(401).json({ message: 'Invalid password reset code' });
     }
 
     await user.save();
 
-    res.status(200).json({ message: 'Password changed successfully' });
+    res.status(200).json({ message: 'Code valid', userId: user._id });
   } catch (error) {
     console.error('Error changing password: ', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -435,12 +465,29 @@ app.post('/passreset', async (req, res) => {
 });
 
 // Route for changing password
-app.post('/passreset', verifyToken, async (req, res) => {
-  const newPassword = req.body;
+app.post('/passreset', async (req, res) => {
+  const { userId, username, newPassword } = req.body;
+
   try {
-    const user = await User.findById(req.user.userId);
-    
-    user.password = newPassword;
+    const query = {};
+    if (userId) {
+      query._id = userId;
+    } else if (username) {
+      query.username = username;
+    } else {
+      return res.status(400).json({ message: 'userId or username is required' });
+    }
+
+    const user = await User.findOne(query); 
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.code = '';
     await user.save();
 
     res.status(200).json({ message: 'Password changed successfully' });

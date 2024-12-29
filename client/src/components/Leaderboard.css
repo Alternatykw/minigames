@@ -12,16 +12,21 @@
 }
 
 .leaderboard-bot table {
-    border-spacing: 4rem 0.5rem;
+    background-color: #333;
+	border: 3px solid #555;
+	border-radius: 8px;
+    border-collapse: collapse;
+	color: #fff;
 }
 
 .leaderboard-bot th {
     font-size: 26px;
-    padding-bottom: 0.5rem;
+    padding: 15px 40px;
 }
 
 .leaderboard-bot td {
     font-size: 18px;
+    padding: 10px 15px;
 }
 
 .leaderboard-top {
@@ -52,6 +57,10 @@
     width: 400px;
 }
 
+.even {
+    background-color: rgb(73, 72, 72);
+}
+
 @media (max-width: 1366px) {
     .leaderboard-top, .leaderboard-bot {
         flex-direction: column;
@@ -72,14 +81,14 @@
     }
 
       #place1 {
-        order: 1; /* Moves place1 (first place) to the second position */
+        order: 1; 
       }
     
       #place2 {
-        order: 2; /* Moves place2 (second place) to the first position */
+        order: 2; 
       }
     
       #place3 {
-        order: 3; /* Keeps place3 (third place) in the third position */
+        order: 3; 
       }
   }

@@ -2,15 +2,16 @@ import { useState } from 'react';
 import './AccountModal.css';
 import axios from 'axios';
 import { useUserData } from '../utils/UserUtils';
+import { Link } from 'react-router-dom';
+import PasswordChange from './PasswordChange';
 
 const AccountModal = ({ action, setAction }) => {
-    const { setIsLoggedIn } = useUserData();
-    const [forgot, setForgot] = useState(false);
+    const { setIsLoggedIn, user } = useUserData();
     const [loading, setLoading] = useState(false);
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [message, setMessage] = useState('');
-    const [passwordReset, setPasswordReset] = useState(false);
+    const [passwordChange, setPasswordChange] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -27,7 +28,6 @@ const AccountModal = ({ action, setAction }) => {
                 }
             })
 
-            // Check if the response is successful
             if (response.status === 200) {
                 if (action === 'daccount') {
                     axios.delete('http://localhost:5000/user', {
@@ -35,7 +35,7 @@ const AccountModal = ({ action, setAction }) => {
                           Authorization: `Bearer ${token}`
                         }
                     }).then(response => {
-                        setMessage(response.message);
+                        setMessage('Account successfully removed');
                         setTimeout(() => {
                             setAction('');
                             setIsLoggedIn(false);
@@ -47,10 +47,10 @@ const AccountModal = ({ action, setAction }) => {
                         setErrorMessage('Error deleting user');
                       });
                 } else if(action === 'cpassword') {
-                    setPasswordReset(true);
+                    setPasswordChange(true);
                 }
             } else {
-                setErrorMessage(response.data.error || 'Something went wrong');
+                setErrorMessage('Error deleting user');
             }
         } catch (error) {
             if (error.response) {
@@ -63,35 +63,40 @@ const AccountModal = ({ action, setAction }) => {
         }
     };
 
-    const handleForgotClick = () => {
-        setForgot(true);
-    }
-
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
     };
 
     return (
-        <div className="acc-container">
-            <h2>Enter your password to proceed</h2>
-            <form onSubmit={handleSubmit} method="post" className="password-form">
-                <input
-                    type="password"
-                    placeholder="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    required
-                />
-
-                <button type="submit" disabled={loading}>
-                    {loading ? <div className="spinner"></div> : 'Proceed'}
-                </button>
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
-                <p onClick={handleForgotClick} className="pass-forgot">
-                    Forgot your password?
-                </p>
-            </form>
-        </div>
+        <>
+            {message ? (
+                <div className="message">
+                    <h2>{message}</h2>
+                </div>
+            ) : passwordChange ? (
+                <PasswordChange username={user.username} />
+            ) : (
+                <div className="acc-container">
+                    <h2>Enter your password to proceed</h2>
+                    <form onSubmit={handleSubmit} method="post" className="password-form">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={handlePasswordChange}
+                            required
+                        />
+                        <button type="submit" disabled={loading}>
+                            {loading ? <div className="spinner"></div> : 'Proceed'}
+                        </button>
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        <p className="pass-forgot">
+                            <Link to="/forgot">Forgot your password?</Link>
+                        </p>
+                    </form>
+                </div>
+            )}
+        </>
     );   
 }
 

@@ -66,17 +66,17 @@ const Leaderboard = ({ user, isLoggedIn }) => {
             <div id='place2'>
               <img src={trophy2} alt="second place" />
               <h2>#2 {topUsers[1]?.username || 'Loading...'}</h2>
-              <h3>Profit: {topUsers[1]?.profit || 'Loading...'}</h3>
+              <h3>Profit: {formatProfit(topUsers[1]?.profit) || 'Loading...'}</h3>
             </div>
             <div id='place1'>
               <img src={trophy1} alt="first place" />
               <h1>#1 {topUsers[0]?.username || 'Loading...'}</h1>
-              <h2>Profit: {topUsers[0]?.profit || 'Loading...'}</h2>
+              <h2>Profit: {formatProfit(topUsers[0]?.profit) || 'Loading...'}</h2>
             </div>
             <div id='place3'>
               <img src={trophy3} alt="third place" />
               <h2>#3 {topUsers[2]?.username || 'Loading...'}</h2>
-              <h3>Profit: {topUsers[2]?.profit || 'Loading...'}</h3>
+              <h3>Profit: {formatProfit(topUsers[2]?.profit)|| 'Loading...'}</h3>
             </div>
         </div>
         <div className="leaderboard-bot">
@@ -92,7 +92,7 @@ const Leaderboard = ({ user, isLoggedIn }) => {
                     </thead>
                     <tbody>
                         {topUsers.map((user, index) => (
-                            <tr key={index} className={index === 0 ? 'top1' : 'leaderboard-tr'}>
+                            <tr key={index} className={index%2 === 0 ? 'even' : 'odd'}>
                                 <td>#{index+1}</td>
                                 <td>{user.username}</td>
                                 <td>{formatProfit(user.profit)}</td>
@@ -113,7 +113,7 @@ const Leaderboard = ({ user, isLoggedIn }) => {
                     </thead>
                     <tbody>
                         {bottomUsers.map((user, index) => (
-                            <tr key={index} className={index === 0 ? 'top1' : 'leaderboard-tr'}>
+                            <tr key={index} className={index%2 === 0 ? 'even' : 'odd'}>
                                 <td>#{index+1}</td>
                                 <td>{user.username}</td>
                                 <td>{formatProfit(user.profit)}</td>

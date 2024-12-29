@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './Forms.css';
 import RegistrationForm from './RegistrationForm';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const LoginForm = ({ onClose }) => {
   const [username, setUsername] = useState('');
@@ -64,6 +65,7 @@ const LoginForm = ({ onClose }) => {
           onChange={handlePasswordChange}
           required
         />
+        <p className="forgot-p"><Link to="/forgot">Forgot?</Link></p>
         <button type="submit" disabled={loading}>
           {loading ? <div className="spinner"></div> : 'Login'}
         </button>

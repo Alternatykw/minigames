@@ -7,6 +7,15 @@
     position: relative;
 }
 
+.message {
+	background-color: #45a049;
+    border: 2px solid green;
+	border-radius: 8px;
+	color: #fff;
+	padding: 20px 40px 30px 40px;
+    position: relative;
+}
+
 .pass-forgot {
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
@@ -44,7 +53,23 @@
 	background-color: #45a049;
 }
 
-.acc-container h2 {
+.message, .acc-container h2 {
     margin-top: 1rem;
     margin-bottom: 2rem;
+}
+
+.success {
+	font-size: large;
+	color: green;
+	font-weight: 700;
+	margin-bottom: 0.75rem;
+	max-width: 600px;
+}
+
+.error {
+	font-size: large;
+	color: red;
+	font-weight: 700;
+	margin-bottom: 0.75rem;
+	max-width: 600px;
 }
