@@ -97,7 +97,7 @@
 	z-index: 1000;
 }
 .balance-container{
-	margin-top: 5rem;
+	padding-top: 5rem;
 }
 .modal-content {
 	animation: easeIn 0.75s forwards;

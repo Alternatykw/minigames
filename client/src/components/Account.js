@@ -47,7 +47,7 @@ const Account = ({ user }) => {
             <p className="credentials">Username: {user.username}</p>
             <p className="credentials">Email: {formatEmail(user.email)}</p>
             <p className="credentials">
-              Profit: <span className={user.profit > 0 ? 'positive-profit' : 'negative-profit'}>
+              Profit: <span className={user.profit >= 0 ? 'positive-profit' : 'negative-profit'}>
                 {formatProfit(user.profit)}
               </span>
             </p>
