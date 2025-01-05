@@ -51,7 +51,12 @@ const ActivateOrPassword = ({ codeAction }) => {
                 setErrorMessage("The code you provided isn't correct");
             }
         } catch (error) {
-            setErrorMessage("The code you provided isn't correct");
+            if (error.response) {
+                console.log(error.response.data.message);
+                setErrorMessage(error.response.data.message);
+              } else {
+                setErrorMessage("The code you provided isn't correct");
+              }
         } finally {
             setLoading(false);
         }

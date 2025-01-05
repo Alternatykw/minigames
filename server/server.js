@@ -175,9 +175,9 @@ const jwtSecret = process.env.JWT_SECRET;
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
-  const { code } = req.query;
+  const { code } = req.body;
 
-  if (!token) {
+  if (!token || token==="Bearer null") {
     return res.status(401).json({
       message: code ? 'You need to log in to activate the account' : 'Unauthorized: No token provided'
     });
